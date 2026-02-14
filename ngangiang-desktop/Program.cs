@@ -9,7 +9,7 @@ namespace ngangiang_desktop
     internal static class Program
     {
         /// <summary>
-        /// The main entry point for the application.
+        /// Điểm khởi chạy chính của ứng dụng.
         /// </summary>
         [STAThread]
         static void Main()

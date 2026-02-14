@@ -18,6 +18,9 @@ namespace ngangiang_desktop
             InitializeComponent();
         }
 
+        /// <summary>
+        /// Sự kiện Load Form: Tải dữ liệu NCC, Mặt hàng và thêm dòng nhập liệu mặc định.
+        /// </summary>
         private void FormTaoDon_Load(object sender, EventArgs e)
         {
             LoadNhaCungCap();
@@ -133,7 +136,7 @@ namespace ngangiang_desktop
         /// </summary>
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // ===== VALIDATION PHASE =====
+            // ===== KIỂM TRA DỮ LIỆU ĐẦU VÀO =====
             // 1. Kiểm tra đã chọn NCC chưa
             if (cboNCC.SelectedIndex == -1)
             {
@@ -203,6 +206,7 @@ namespace ngangiang_desktop
         /// <param name="danhSachMatHang">Dictionary chứa ID Mặt hàng và Số lượng.</param>
         private void LuuDonHang(int idNCC, Dictionary<int, int> danhSachMatHang)
         {
+            // Quản lý connection/transaction thủ công bằng try/catch/finally để Rollback khi lỗi
             SqlConnection connection = null;
             SqlTransaction transaction = null;
 
@@ -210,8 +214,6 @@ namespace ngangiang_desktop
             {
                 connection = DatabaseHelper.CreateConnection();
                 connection.Open();
-                
-                // Bắt đầu Transaction
                 transaction = connection.BeginTransaction();
 
                 // Bước 1: Insert vào bảng DonNhapHang và lấy ID vừa tạo
@@ -236,7 +238,6 @@ namespace ngangiang_desktop
                     cmdChiTiet.ExecuteNonQuery();
                 }
 
-                // Nếu thành công, xác nhận Transaction
                 transaction.Commit();
 
                 MessageBox.Show($"Tạo đơn nhập hàng thành công! Mã đơn: {idDonNhap}", 
@@ -259,6 +260,9 @@ namespace ngangiang_desktop
             }
         }
 
+        /// <summary>
+        /// Xử lý sự kiện click nút "Hủy": Đóng form mà không lưu dữ liệu.
+        /// </summary>
         private void btnHuy_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;

@@ -77,8 +77,6 @@ namespace ngangiang_desktop
             {
                 // Lấy ID từ cột đầu tiên (Mã đơn)
                 int idDonNhap = Convert.ToInt32(dgvDonNhap.SelectedRows[0].Cells["Mã đơn"].Value);
-                
-                // Gọi hàm load chi tiết
                 LoadChiTietDonNhap(idDonNhap);
             }
         }
@@ -129,8 +127,6 @@ namespace ngangiang_desktop
                 {
                     tongTien += Convert.ToDecimal(row["Thành tiền"]);
                 }
-                
-                // Hiển thị tổng tiền
                 lblTongTien.Text = $"Tổng tiền: {tongTien:N0} ₫";
             }
             catch (Exception ex)

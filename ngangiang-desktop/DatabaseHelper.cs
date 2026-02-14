@@ -7,11 +7,11 @@ namespace ngangiang_desktop
 {
     /// <summary>
     /// Lớp tiện ích hỗ trợ kết nối và thực thi truy vấn SQL Server.
-    /// Sử dụng ADO.NET truyền thống để tối ưu hiệu năng và khả năng kiểm soát kết nối.
+    /// Sử dụng ADO.NET (phù hợp với .NET Framework 4.8) để kiểm soát trực tiếp kết nối và truy vấn.
     /// </summary>
     public static class DatabaseHelper
     {
-        // Cache connection string để tối ưu hiệu năng và đảm bảo immutability
+        // Lưu connection string dạng readonly để tránh thay đổi ngoài ý muốn
         private static readonly string _connectionString = ConfigurationManager.ConnectionStrings["QuanLyNhapHang"].ConnectionString;
 
         /// <summary>
@@ -44,9 +44,8 @@ namespace ngangiang_desktop
                 }
                 catch (Exception ex)
                 {
-                    // Ném lại exception để tầng UI xử lý và hiển thị thông báo cho người dùng
-                    // Giữ nguyên stack trace để dễ debug
-                    throw new Exception("Lỗi thực thi truy vấn: " + ex.Message);
+                    // Wrap exception kèm thông báo tiếng Việt để tầng UI hiển thị, giữ stack trace qua InnerException
+                    throw new Exception("Lỗi thực thi truy vấn: " + ex.Message, ex);
                 }
             }
             return dataTable;
@@ -72,9 +71,8 @@ namespace ngangiang_desktop
                 }
                 catch (Exception ex)
                 {
-                    // Ném lại exception để tầng UI xử lý và hiển thị thông báo cho người dùng
-                    // Giữ nguyên stack trace để dễ debug
-                    throw new Exception("Lỗi thực thi lệnh: " + ex.Message);
+                    // Wrap exception kèm thông báo tiếng Việt để tầng UI hiển thị, giữ stack trace qua InnerException
+                    throw new Exception("Lỗi thực thi lệnh: " + ex.Message, ex);
                 }
             }
             return rowsAffected;
@@ -100,9 +98,8 @@ namespace ngangiang_desktop
                 }
                 catch (Exception ex)
                 {
-                    // Ném lại exception để tầng UI xử lý và hiển thị thông báo cho người dùng
-                    // Giữ nguyên stack trace để dễ debug
-                    throw new Exception("Lỗi lấy giá trị đơn: " + ex.Message);
+                    // Wrap exception kèm thông báo tiếng Việt để tầng UI hiển thị, giữ stack trace qua InnerException
+                    throw new Exception("Lỗi lấy giá trị đơn: " + ex.Message, ex);
                 }
             }
             return result;
