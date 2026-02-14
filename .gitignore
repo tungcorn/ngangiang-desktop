@@ -48,9 +48,13 @@ nunit-agent.log
 # StyleCop
 StyleCop.Cache
 
-# Files built by Visual Studio
-*.obj
-*.exe
+# Files built by Visual# MSBuild
+bin/
+obj/
+*.user
+*.config
+!*.config.example
+!*.config.template
 *.pdb
 *.dll
 *.lib

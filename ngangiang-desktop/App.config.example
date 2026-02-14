@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<configuration>
+    <startup> 
+        <supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.8" />
+    </startup>
+    <connectionStrings>
+        <!-- Template cấu hình kết nối SQL Server -->
+        <!-- Copy file này thành App.config và điền thông tin thật của bạn -->
+        <add name="QuanLyNhapHang"
+             connectionString="Server=127.0.0.1;Database=QuanLyNhapHang;User ID=YOUR_USERNAME;Password=YOUR_PASSWORD;"
+             providerName="System.Data.SqlClient"/>
+    </connectionStrings>
+</configuration>
