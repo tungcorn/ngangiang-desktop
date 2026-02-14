@@ -53,7 +53,7 @@ namespace ngangiang_desktop
                 string query = @"
                     SELECT 
                         m.Id_MatHang, 
-                        '[' + l.Name + '] ' + m.Ten_MatHang + ' - ' + CAST(m.DonGia AS NVARCHAR) + ' ₫' AS DisplayText,
+                        '[' + l.Name + '] ' + m.Ten_MatHang + ' - ' + FORMAT(m.DonGia, 'N0') AS DisplayText,
                         m.Ten_MatHang,
                         m.DonGia
                     FROM MatHang m
@@ -69,7 +69,8 @@ namespace ngangiang_desktop
                 colMatHang.DisplayMember = "DisplayText";
                 colMatHang.ValueMember = "Id_MatHang";
                 colMatHang.DataSource = dt;
-                colMatHang.Width = 300;
+                colMatHang.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+                colMatHang.MinimumWidth = 300;
 
                 dgvMatHang.Columns.Add(colMatHang);
 
