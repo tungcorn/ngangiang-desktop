@@ -7,6 +7,10 @@ using System.Windows.Forms;
 
 namespace ngangiang_desktop
 {
+    /// <summary>
+    /// Form tạo mới đơn nhập hàng.
+    /// Chức năng chính: Chọn NCC, thêm mặt hàng vào lưới, và lưu đơn hàng vào CSDL.
+    /// </summary>
     public partial class FormTaoDon : Form
     {
         public FormTaoDon()
@@ -22,7 +26,7 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Load danh sách Nhà cung cấp vào ComboBox
+        /// Tải danh sách Nhà cung cấp từ CSDL và đổ vào ComboBox.
         /// </summary>
         private void LoadNhaCungCap()
         {
@@ -34,7 +38,7 @@ namespace ngangiang_desktop
                 cboNCC.DisplayMember = "Ten_NCC";
                 cboNCC.ValueMember = "Id_NCC";
                 cboNCC.DataSource = dt;
-                cboNCC.SelectedIndex = -1; // Không chọn gì mặc định
+                cboNCC.SelectedIndex = -1; // Bắt buộc người dùng chọn NCC (tránh chọn nhầm giá trị đầu tiên)
             }
             catch (Exception ex)
             {
@@ -44,12 +48,14 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Load danh sách Mặt hàng để dùng cho ComboBox trong DataGridView
+        /// Tải danh sách Mặt hàng và tạo cột ComboBox trong DataGridView.
+        /// Sử dụng kỹ thuật hiển thị [Tên Loại] + Tên Mặt hàng để tối ưu UX.
         /// </summary>
         private void LoadMatHang()
         {
             try
             {
+                // JOIN bảng LoaiHang để hiển thị tên loại
                 string query = @"
                     SELECT 
                         m.Id_MatHang, 
@@ -62,7 +68,7 @@ namespace ngangiang_desktop
 
                 DataTable dt = DatabaseHelper.ExecuteQuery(query);
 
-                // Tạo cột ComboBox trong DataGridView
+                // Tạo cột ComboBox chọn mặt hàng
                 DataGridViewComboBoxColumn colMatHang = new DataGridViewComboBoxColumn();
                 colMatHang.HeaderText = "Mặt hàng";
                 colMatHang.Name = "colMatHang";
@@ -70,15 +76,15 @@ namespace ngangiang_desktop
                 colMatHang.ValueMember = "Id_MatHang";
                 colMatHang.DataSource = dt;
                 colMatHang.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
-                colMatHang.MinimumWidth = 300;
+                colMatHang.MinimumWidth = 300; // Đủ rộng để hiển thị "[Loại] Tên mặt hàng - Giá"
 
                 dgvMatHang.Columns.Add(colMatHang);
 
-                // Cột Số lượng
+                // Tạo cột nhập Số lượng
                 DataGridViewTextBoxColumn colSoLuong = new DataGridViewTextBoxColumn();
                 colSoLuong.HeaderText = "Số lượng";
                 colSoLuong.Name = "colSoLuong";
-                colSoLuong.Width = 100;
+                colSoLuong.Width = 100; // Vừa đủ cho số lượng 4-5 chữ số
                 dgvMatHang.Columns.Add(colSoLuong);
             }
             catch (Exception ex)
@@ -89,7 +95,7 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Thêm 1 dòng trống mặc định
+        /// Thêm một dòng trống vào lưới để người dùng bắt đầu nhập liệu ngay.
         /// </summary>
         private void ThemDongMacDinh()
         {
@@ -97,7 +103,7 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Nút Thêm dòng
+        /// Xử lý sự kiện click nút "Thêm dòng".
         /// </summary>
         private void btnThemDong_Click(object sender, EventArgs e)
         {
@@ -105,7 +111,8 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Nút Xóa dòng
+        /// Xử lý sự kiện click nút "Xóa dòng".
+        /// Chỉ xóa khi có ít nhất 1 dòng dữ liệu.
         /// </summary>
         private void btnXoaDong_Click(object sender, EventArgs e)
         {
@@ -121,11 +128,13 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Nút Lưu đơn hàng
+        /// Xử lý sự kiện click nút "Lưu".
+        /// Thực hiện Validation, gộp hàng trùng và gọi hàm lưu vào DB.
         /// </summary>
         private void btnLuu_Click(object sender, EventArgs e)
         {
-            // Validate
+            // ===== VALIDATION PHASE =====
+            // 1. Kiểm tra đã chọn NCC chưa
             if (cboNCC.SelectedIndex == -1)
             {
                 MessageBox.Show("Vui lòng chọn Nhà cung cấp!", 
@@ -133,16 +142,17 @@ namespace ngangiang_desktop
                 return;
             }
 
-            // Lấy danh sách mặt hàng từ DataGridView
+            // 2. Duyệt qua lưới để lấy danh sách mặt hàng và số lượng
             Dictionary<int, int> danhSachMatHang = new Dictionary<int, int>();
 
             foreach (DataGridViewRow row in dgvMatHang.Rows)
             {
-                if (row.IsNewRow) continue;
+                if (row.IsNewRow) continue; // Bỏ qua dòng mới chưa nhập
 
                 var cellMatHang = row.Cells["colMatHang"].Value;
                 var cellSoLuong = row.Cells["colSoLuong"].Value;
 
+                // Validate dữ liệu trống
                 if (cellMatHang == null || cellSoLuong == null)
                 {
                     MessageBox.Show("Vui lòng điền đầy đủ thông tin mặt hàng và số lượng!", 
@@ -153,6 +163,7 @@ namespace ngangiang_desktop
                 int idMatHang = Convert.ToInt32(cellMatHang);
                 int soLuong;
 
+                // Validate số lượng phải là số nguyên dương
                 if (!int.TryParse(cellSoLuong.ToString(), out soLuong) || soLuong <= 0)
                 {
                     MessageBox.Show("Số lượng phải là số nguyên dương!", 
@@ -160,7 +171,7 @@ namespace ngangiang_desktop
                     return;
                 }
 
-                // Gộp mặt hàng trùng (cộng dồn số lượng)
+                // Gộp số lượng nếu mặt hàng bị chọn trùng (tránh duplicate trong CSDL)
                 if (danhSachMatHang.ContainsKey(idMatHang))
                 {
                     danhSachMatHang[idMatHang] += soLuong;
@@ -171,6 +182,7 @@ namespace ngangiang_desktop
                 }
             }
 
+            // Kiểm tra phải có ít nhất 1 mặt hàng hợp lệ
             if (danhSachMatHang.Count == 0)
             {
                 MessageBox.Show("Đơn hàng phải có ít nhất 1 mặt hàng!", 
@@ -178,13 +190,17 @@ namespace ngangiang_desktop
                 return;
             }
 
-            // Lưu vào database với Transaction
+            // Gọi hàm lưu dữ liệu
             LuuDonHang(Convert.ToInt32(cboNCC.SelectedValue), danhSachMatHang);
         }
 
         /// <summary>
-        /// Lưu đơn hàng vào database (dùng Transaction)
+        /// Lưu đơn hàng vào CSDL sử dụng SQL Transaction.
+        /// Đảm bảo tính toàn vẹn dữ liệu: Insert DonNhapHang -> Insert ChiTietDonNhap.
+        /// Nếu lỗi ở bất kỳ bước nào, toàn bộ sẽ được Rollback.
         /// </summary>
+        /// <param name="idNCC">ID Nhà cung cấp.</param>
+        /// <param name="danhSachMatHang">Dictionary chứa ID Mặt hàng và Số lượng.</param>
         private void LuuDonHang(int idNCC, Dictionary<int, int> danhSachMatHang)
         {
             SqlConnection connection = null;
@@ -194,16 +210,19 @@ namespace ngangiang_desktop
             {
                 connection = DatabaseHelper.CreateConnection();
                 connection.Open();
+                
+                // Bắt đầu Transaction
                 transaction = connection.BeginTransaction();
 
-                // 1. Insert vào DonNhapHang
+                // Bước 1: Insert vào bảng DonNhapHang và lấy ID vừa tạo
+                // Dùng SCOPE_IDENTITY() thay vì @@IDENTITY để tránh lấy nhầm ID từ trigger
                 string sqlDonNhap = "INSERT INTO DonNhapHang (FK_Id_NCC) VALUES (@IdNCC); SELECT SCOPE_IDENTITY();";
                 SqlCommand cmdDonNhap = new SqlCommand(sqlDonNhap, connection, transaction);
                 cmdDonNhap.Parameters.AddWithValue("@IdNCC", idNCC);
 
                 int idDonNhap = Convert.ToInt32(cmdDonNhap.ExecuteScalar());
 
-                // 2. Insert vào ChiTietDonNhap
+                // Bước 2: Insert từng mặt hàng vào bảng ChiTietDonNhap
                 foreach (var item in danhSachMatHang)
                 {
                     string sqlChiTiet = @"
@@ -217,7 +236,7 @@ namespace ngangiang_desktop
                     cmdChiTiet.ExecuteNonQuery();
                 }
 
-                // Commit transaction
+                // Nếu thành công, xác nhận Transaction
                 transaction.Commit();
 
                 MessageBox.Show($"Tạo đơn nhập hàng thành công! Mã đơn: {idDonNhap}", 
@@ -228,7 +247,7 @@ namespace ngangiang_desktop
             }
             catch (Exception ex)
             {
-                // Rollback nếu có lỗi
+                // Nếu có bất kỳ lỗi nào, hoàn tác Transaction
                 transaction?.Rollback();
 
                 MessageBox.Show($"Lỗi khi lưu đơn hàng: {ex.Message}", 
@@ -240,9 +259,6 @@ namespace ngangiang_desktop
             }
         }
 
-        /// <summary>
-        /// Nút Hủy
-        /// </summary>
         private void btnHuy_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.Cancel;

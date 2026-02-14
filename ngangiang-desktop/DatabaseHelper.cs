@@ -6,99 +6,106 @@ using System.Data.SqlClient;
 namespace ngangiang_desktop
 {
     /// <summary>
-    /// Class tiện ích để quản lý kết nối và thực thi câu lệnh SQL
+    /// Lớp tiện ích hỗ trợ kết nối và thực thi truy vấn SQL Server.
+    /// Sử dụng ADO.NET truyền thống để tối ưu hiệu năng và khả năng kiểm soát kết nối.
     /// </summary>
     public static class DatabaseHelper
     {
+        // Cache connection string để tối ưu hiệu năng và đảm bảo immutability
+        private static readonly string _connectionString = ConfigurationManager.ConnectionStrings["QuanLyNhapHang"].ConnectionString;
+
         /// <summary>
-        /// Lấy connection string từ App.config
+        /// Tạo và trả về một đối tượng SqlConnection mới.
+        /// Hàm này hữu ích khi cần tự quản lý connection (ví dụ: dùng trong Transaction thủ công).
         /// </summary>
-        private static string GetConnectionString()
+        /// <returns>Đối tượng SqlConnection đã được khởi tạo với chuỗi kết nối.</returns>
+        public static SqlConnection CreateConnection()
         {
-            return ConfigurationManager.ConnectionStrings["QuanLyNhapHang"].ConnectionString;
+            return new SqlConnection(_connectionString);
         }
 
         /// <summary>
-        /// Thực thi câu SELECT và trả về DataTable
+        /// Thực thi câu lệnh SQL trả về dữ liệu (SELECT).
+        /// Lưu ý: Hàm này không hỗ trợ parameterized query.
+        /// Chỉ dùng cho truy vấn tĩnh, không nối chuỗi từ user input để tránh SQL Injection.
         /// </summary>
-        public static DataTable ExecuteQuery(string query, params SqlParameter[] parameters)
+        /// <param name="query">Câu lệnh SQL SELECT.</param>
+        /// <returns>DataTable chứa kết quả truy vấn.</returns>
+        public static DataTable ExecuteQuery(string query)
         {
             DataTable dataTable = new DataTable();
-            
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                using (SqlCommand command = new SqlCommand(query, connection))
+                try
                 {
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(parameters);
-                    }
-
                     connection.Open();
-                    using (SqlDataAdapter adapter = new SqlDataAdapter(command))
-                    {
-                        adapter.Fill(dataTable);
-                    }
+                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
+                    adapter.Fill(dataTable);
+                }
+                catch (Exception ex)
+                {
+                    // Ném lại exception để tầng UI xử lý và hiển thị thông báo cho người dùng
+                    // Giữ nguyên stack trace để dễ debug
+                    throw new Exception("Lỗi thực thi truy vấn: " + ex.Message);
                 }
             }
-
             return dataTable;
         }
 
         /// <summary>
-        /// Thực thi câu INSERT/UPDATE/DELETE và trả về số dòng bị ảnh hưởng
+        /// Thực thi câu lệnh SQL không trả về dữ liệu (INSERT, UPDATE, DELETE).
+        /// Lưu ý: Hàm này không hỗ trợ parameterized query.
+        /// Chỉ dùng cho truy vấn tĩnh, không nối chuỗi từ user input để tránh SQL Injection.
         /// </summary>
-        public static int ExecuteNonQuery(string query, params SqlParameter[] parameters)
+        /// <param name="query">Câu lệnh SQL hành động.</param>
+        /// <returns>Số dòng bị ảnh hưởng (Records Affected).</returns>
+        public static int ExecuteNonQuery(string query)
         {
             int rowsAffected = 0;
-
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                using (SqlCommand command = new SqlCommand(query, connection))
+                try
                 {
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(parameters);
-                    }
-
                     connection.Open();
+                    SqlCommand command = new SqlCommand(query, connection);
                     rowsAffected = command.ExecuteNonQuery();
                 }
+                catch (Exception ex)
+                {
+                    // Ném lại exception để tầng UI xử lý và hiển thị thông báo cho người dùng
+                    // Giữ nguyên stack trace để dễ debug
+                    throw new Exception("Lỗi thực thi lệnh: " + ex.Message);
+                }
             }
-
             return rowsAffected;
         }
 
         /// <summary>
-        /// Thực thi câu lệnh và trả về giá trị đầu tiên (dùng cho COUNT, SCOPE_IDENTITY...)
+        /// Thực thi câu lệnh SQL trả về một giá trị duy nhất (COUNT, SUM, MAX...).
+        /// Lưu ý: Hàm này không hỗ trợ parameterized query.
+        /// Chỉ dùng cho truy vấn tĩnh, không nối chuỗi từ user input để tránh SQL Injection.
         /// </summary>
-        public static object ExecuteScalar(string query, params SqlParameter[] parameters)
+        /// <param name="query">Câu lệnh SQL trả về 1 ô dữ liệu.</param>
+        /// <returns>Đối tượng kết quả (cần ép kiểu khi sử dụng).</returns>
+        public static object ExecuteScalar(string query)
         {
             object result = null;
-
-            using (SqlConnection connection = new SqlConnection(GetConnectionString()))
+            using (SqlConnection connection = new SqlConnection(_connectionString))
             {
-                using (SqlCommand command = new SqlCommand(query, connection))
+                try
                 {
-                    if (parameters != null)
-                    {
-                        command.Parameters.AddRange(parameters);
-                    }
-
                     connection.Open();
+                    SqlCommand command = new SqlCommand(query, connection);
                     result = command.ExecuteScalar();
                 }
+                catch (Exception ex)
+                {
+                    // Ném lại exception để tầng UI xử lý và hiển thị thông báo cho người dùng
+                    // Giữ nguyên stack trace để dễ debug
+                    throw new Exception("Lỗi lấy giá trị đơn: " + ex.Message);
+                }
             }
-
             return result;
-        }
-
-        /// <summary>
-        /// Tạo SqlConnection mới (dùng cho Transaction)
-        /// </summary>
-        public static SqlConnection CreateConnection()
-        {
-            return new SqlConnection(GetConnectionString());
         }
     }
 }
