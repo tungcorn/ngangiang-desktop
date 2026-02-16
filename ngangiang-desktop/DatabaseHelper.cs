@@ -39,8 +39,10 @@ namespace ngangiang_desktop
                 try
                 {
                     connection.Open();
-                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-                    adapter.Fill(dataTable);
+                    using (SqlDataAdapter adapter = new SqlDataAdapter(query, connection))
+                    {
+                        adapter.Fill(dataTable);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -66,8 +68,10 @@ namespace ngangiang_desktop
                 try
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand(query, connection);
-                    rowsAffected = command.ExecuteNonQuery();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        rowsAffected = command.ExecuteNonQuery();
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -93,8 +97,10 @@ namespace ngangiang_desktop
                 try
                 {
                     connection.Open();
-                    SqlCommand command = new SqlCommand(query, connection);
-                    result = command.ExecuteScalar();
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        result = command.ExecuteScalar();
+                    }
                 }
                 catch (Exception ex)
                 {
