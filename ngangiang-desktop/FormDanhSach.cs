@@ -33,7 +33,6 @@ namespace ngangiang_desktop
             // Xóa selection mặc định
             dgvDonNhap.ClearSelection();
             dgvChiTiet.DataSource = null;
-            lblTongTien.Text = "Tổng tiền: 0 ₫";
         }
 
         /// <summary>
@@ -223,11 +222,19 @@ namespace ngangiang_desktop
                 dgvDonNhap.DataSource = dt;
                 dgvDonNhap.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
 
-                // Format cột Tổng tiền
+                // Format cột Tổng tiền trong bảng
                 if (dgvDonNhap.Columns["Tổng tiền"] != null)
                     dgvDonNhap.Columns["Tổng tiền"].DefaultCellStyle.Format = "N0";
 
+                // Tính TỔNG CỘNG của tất cả các đơn đang được lọc
+                decimal grandTotal = 0;
+                foreach (DataRow row in dt.Rows)
+                {
+                    grandTotal += Convert.ToDecimal(row["Tổng tiền"]);
+                }
+
                 lblTongSoDon.Text = $"Tổng số đơn: {dt.Rows.Count}";
+                lblTongTien.Text = $"Tổng cộng: {grandTotal:N0} ₫";
             }
             catch (Exception ex)
             {
@@ -285,13 +292,6 @@ namespace ngangiang_desktop
                     dgvChiTiet.Columns["Đơn giá"].DefaultCellStyle.Format = "N0";
                 if (dgvChiTiet.Columns["Thành tiền"] != null)
                     dgvChiTiet.Columns["Thành tiền"].DefaultCellStyle.Format = "N0";
-
-                decimal tongTien = 0;
-                foreach (DataRow row in dt.Rows)
-                {
-                    tongTien += Convert.ToDecimal(row["Thành tiền"]);
-                }
-                lblTongTien.Text = $"Tổng tiền: {tongTien:N0} ₫";
             }
             catch (Exception ex)
             {
@@ -311,7 +311,6 @@ namespace ngangiang_desktop
                 LoadDanhSachNCC();
                 LoadDanhSachDonNhap();
                 dgvChiTiet.DataSource = null;
-                lblTongTien.Text = "Tổng tiền: 0 ₫";
             }
         }
 
@@ -323,7 +322,6 @@ namespace ngangiang_desktop
             LoadDanhSachNCC();
             LoadDanhSachDonNhap();
             dgvChiTiet.DataSource = null;
-            lblTongTien.Text = "Tổng tiền: 0 ₫";
         }
 
         /// <summary>
