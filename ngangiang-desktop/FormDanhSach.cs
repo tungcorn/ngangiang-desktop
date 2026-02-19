@@ -11,8 +11,9 @@ namespace ngangiang_desktop
     /// Chức năng:
     /// 1. Hiển thị bảng NCC có cột checkbox để lọc — pattern "listcheckbox" chuẩn enterprise.
     /// 2. Hiển thị danh sách đơn nhập hàng theo NCC đã tick.
-    /// 3. Xem chi tiết mặt hàng và thành tiền của từng đơn.
-    /// 4. Cung cấp lối tắt để tạo đơn hàng mới hoặc làm mới dữ liệu.
+    /// 3. Mỗi dòng đơn hàng có nút Chi tiết / Sửa / Xóa inline.
+    /// 4. Xem chi tiết mặt hàng và thành tiền của từng đơn.
+    /// 5. Cung cấp lối tắt để tạo đơn hàng mới hoặc làm mới dữ liệu.
     /// </summary>
     public partial class FormDanhSach : Form
     {
@@ -27,6 +28,7 @@ namespace ngangiang_desktop
         private void FormDanhSach_Load(object sender, EventArgs e)
         {
             SetupDgvNCC();
+            SetupDgvDonNhap();
             LoadDanhSachNCC();
             LoadDanhSachDonNhap();
 
@@ -111,6 +113,138 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
+        /// Thiết lập cột cho bảng Đơn nhập hàng.
+        /// Các cột dữ liệu + 3 cột nút hành động inline: Chi tiết, Sửa, Xóa.
+        /// </summary>
+        private void SetupDgvDonNhap()
+        {
+            dgvDonNhap.AutoGenerateColumns = false;
+            dgvDonNhap.Columns.Clear();
+
+            dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Mã đơn",
+                HeaderText = "Mã đơn",
+                DataPropertyName = "Mã đơn",
+                ReadOnly = true,
+                Width = 70
+            });
+            dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Nhà cung cấp",
+                HeaderText = "Nhà cung cấp",
+                DataPropertyName = "Nhà cung cấp",
+                ReadOnly = true,
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+            });
+            dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
+            {
+                Name = "Số mặt hàng",
+                HeaderText = "Số mặt hàng",
+                DataPropertyName = "Số mặt hàng",
+                ReadOnly = true,
+                Width = 100
+            });
+
+            var colTongTien = new DataGridViewTextBoxColumn
+            {
+                Name = "Tổng tiền",
+                HeaderText = "Tổng tiền",
+                DataPropertyName = "Tổng tiền",
+                ReadOnly = true,
+                Width = 120,
+            };
+            colTongTien.DefaultCellStyle.Format = "N0";
+            colTongTien.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+            dgvDonNhap.Columns.Add(colTongTien);
+
+            // --- Nút hành động inline ---
+            // Nút Chi tiết
+            var colChiTiet = new DataGridViewButtonColumn
+            {
+                Name = "btnChiTiet",
+                HeaderText = "",
+                Text = "Chi tiết",
+                UseColumnTextForButtonValue = true,
+                Width = 75,
+                FlatStyle = FlatStyle.Flat,
+            };
+            colChiTiet.DefaultCellStyle.BackColor = Color.FromArgb(13, 110, 253);
+            colChiTiet.DefaultCellStyle.ForeColor = Color.White;
+            dgvDonNhap.Columns.Add(colChiTiet);
+
+            // Nút Sửa
+            var colSua = new DataGridViewButtonColumn
+            {
+                Name = "btnSua",
+                HeaderText = "",
+                Text = "Sửa",
+                UseColumnTextForButtonValue = true,
+                Width = 55,
+                FlatStyle = FlatStyle.Flat,
+            };
+            colSua.DefaultCellStyle.BackColor = Color.FromArgb(255, 193, 7);
+            colSua.DefaultCellStyle.ForeColor = Color.Black;
+            dgvDonNhap.Columns.Add(colSua);
+
+            // Nút Xóa
+            var colXoa = new DataGridViewButtonColumn
+            {
+                Name = "btnXoa",
+                HeaderText = "",
+                Text = "Xóa",
+                UseColumnTextForButtonValue = true,
+                Width = 55,
+                FlatStyle = FlatStyle.Flat,
+            };
+            colXoa.DefaultCellStyle.BackColor = Color.FromArgb(220, 53, 69);
+            colXoa.DefaultCellStyle.ForeColor = Color.White;
+            dgvDonNhap.Columns.Add(colXoa);
+
+            dgvDonNhap.CellClick += DgvDonNhap_CellClick;
+        }
+
+        /// <summary>
+        /// Sự kiện khi click vào ô trong bảng Đơn nhập.
+        /// Xử lý: chọn dòng để xem chi tiết, hoặc nhấn nút hành động inline.
+        /// </summary>
+        private void DgvDonNhap_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            int idDonNhap = Convert.ToInt32(dgvDonNhap.Rows[e.RowIndex].Cells["Mã đơn"].Value);
+            string colName = dgvDonNhap.Columns[e.ColumnIndex].Name;
+
+            if (colName == "btnChiTiet")
+            {
+                // Auto load chi tiết khi nhấn nút Chi tiết
+                LoadChiTietDonNhap(idDonNhap);
+            }
+            else if (colName == "btnSua")
+            {
+                MessageBox.Show($"Chức năng sửa đơn #{idDonNhap} đang được phát triển.",
+                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else if (colName == "btnXoa")
+            {
+                var confirm = MessageBox.Show(
+                    $"Bạn có chắc muốn xóa đơn #{idDonNhap}?",
+                    "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (confirm == DialogResult.Yes)
+                {
+                    MessageBox.Show($"Chức năng xóa đơn #{idDonNhap} đang được phát triển.",
+                        "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            else
+            {
+                // Click vào các cột dữ liệu → load chi tiết
+                LoadChiTietDonNhap(idDonNhap);
+            }
+        }
+
+        /// <summary>
         /// Sự kiện khi click vào dòng trong bảng NCC.
         /// Cho phép đảo trạng thái checkbox khi click vào bất kỳ ô nào trên dòng.
         /// </summary>
@@ -122,8 +256,8 @@ namespace ngangiang_desktop
             if (dgvNCC.Columns[e.ColumnIndex].Name != "Chọn")
             {
                 var cell = dgvNCC.Rows[e.RowIndex].Cells["Chọn"];
-                cell.Value = !(bool)cell.Value; // Đảo trạng thái
-                
+                cell.Value = !(bool)(cell.Value ?? false); // Đảo trạng thái
+
                 dgvNCC.CommitEdit(DataGridViewDataErrorContexts.Commit);
                 LoadDanhSachDonNhap();
             }
@@ -220,11 +354,6 @@ namespace ngangiang_desktop
 
                 DataTable dt = DatabaseHelper.ExecuteQuery(query);
                 dgvDonNhap.DataSource = dt;
-                dgvDonNhap.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-                // Format cột Tổng tiền trong bảng
-                if (dgvDonNhap.Columns["Tổng tiền"] != null)
-                    dgvDonNhap.Columns["Tổng tiền"].DefaultCellStyle.Format = "N0";
 
                 // Tính TỔNG CỘNG của tất cả các đơn đang được lọc
                 decimal grandTotal = 0;
@@ -238,21 +367,8 @@ namespace ngangiang_desktop
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải danh sách đơn nhập: {ex.Message}", 
+                MessageBox.Show($"Lỗi khi tải danh sách đơn nhập: {ex.Message}",
                     "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        /// <summary>
-        /// Xử lý sự kiện khi người dùng chọn một dòng trong bảng Đơn Nhập.
-        /// Hệ thống sẽ tự động tải chi tiết của đơn hàng đó.
-        /// </summary>
-        private void dgvDonNhap_SelectionChanged(object sender, EventArgs e)
-        {
-            if (dgvDonNhap.SelectedRows.Count > 0)
-            {
-                int idDonNhap = Convert.ToInt32(dgvDonNhap.SelectedRows[0].Cells["Mã đơn"].Value);
-                LoadChiTietDonNhap(idDonNhap);
             }
         }
 
@@ -295,7 +411,7 @@ namespace ngangiang_desktop
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Lỗi khi tải chi tiết đơn nhập: {ex.Message}", 
+                MessageBox.Show($"Lỗi khi tải chi tiết đơn nhập: {ex.Message}",
                     "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
@@ -322,53 +438,6 @@ namespace ngangiang_desktop
             LoadDanhSachNCC();
             LoadDanhSachDonNhap();
             dgvChiTiet.DataSource = null;
-        }
-
-
-
-        /// <summary>
-        /// Nút Xem chi tiết: Chức năng đang phát triển.
-        /// </summary>
-        private void btnXemChiTiet_Click(object sender, EventArgs e)
-        {
-            if (dgvDonNhap.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Vui lòng chọn một đơn hàng để xem chi tiết.",
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            MessageBox.Show("Chức năng xem chi tiết đang được phát triển.",
-                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Nút Sửa: Chức năng đang phát triển.
-        /// </summary>
-        private void btnSua_Click(object sender, EventArgs e)
-        {
-            if (dgvDonNhap.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Vui lòng chọn một đơn hàng để sửa.",
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            MessageBox.Show("Chức năng sửa đơn đang được phát triển.",
-                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-        }
-
-        /// <summary>
-        /// Nút Xóa: Chức năng đang phát triển.
-        /// </summary>
-        private void btnXoa_Click(object sender, EventArgs e)
-        {
-            if (dgvDonNhap.SelectedRows.Count == 0)
-            {
-                MessageBox.Show("Vui lòng chọn một đơn hàng để xóa.",
-                    "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
-            MessageBox.Show("Chức năng xóa đơn đang được phát triển.",
-                "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
     }
 }

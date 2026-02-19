@@ -34,9 +34,6 @@ namespace ngangiang_desktop
             this.dgvChiTiet = new System.Windows.Forms.DataGridView();
             this.btnTaoDon = new System.Windows.Forms.Button();
             this.btnLamMoi = new System.Windows.Forms.Button();
-            this.btnXemChiTiet = new System.Windows.Forms.Button();
-            this.btnSua = new System.Windows.Forms.Button();
-            this.btnXoa = new System.Windows.Forms.Button();
             this.lblNCC = new System.Windows.Forms.Label();
             this.lblDanhSach = new System.Windows.Forms.Label();
             this.lblChiTiet = new System.Windows.Forms.Label();
@@ -65,7 +62,7 @@ namespace ngangiang_desktop
             this.btnTaoDon.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnTaoDon.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.btnTaoDon.ForeColor = System.Drawing.Color.White;
-            this.btnTaoDon.Location = new System.Drawing.Point(493, 12);
+            this.btnTaoDon.Location = new System.Drawing.Point(743, 12);
             this.btnTaoDon.Name = "btnTaoDon";
             this.btnTaoDon.Size = new System.Drawing.Size(120, 32);
             this.btnTaoDon.TabIndex = 1;
@@ -80,58 +77,13 @@ namespace ngangiang_desktop
             this.btnLamMoi.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
             this.btnLamMoi.Font = new System.Drawing.Font("Segoe UI", 10F);
             this.btnLamMoi.ForeColor = System.Drawing.Color.White;
-            this.btnLamMoi.Location = new System.Drawing.Point(619, 12);
+            this.btnLamMoi.Location = new System.Drawing.Point(869, 12);
             this.btnLamMoi.Name = "btnLamMoi";
             this.btnLamMoi.Size = new System.Drawing.Size(100, 32);
             this.btnLamMoi.TabIndex = 2;
             this.btnLamMoi.Text = "🔄 Làm mới";
             this.btnLamMoi.UseVisualStyleBackColor = false;
             this.btnLamMoi.Click += new System.EventHandler(this.btnLamMoi_Click);
-            // 
-            // btnXemChiTiet
-            // 
-            this.btnXemChiTiet.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnXemChiTiet.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(110)))), ((int)(((byte)(253)))));
-            this.btnXemChiTiet.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnXemChiTiet.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnXemChiTiet.ForeColor = System.Drawing.Color.White;
-            this.btnXemChiTiet.Location = new System.Drawing.Point(725, 12);
-            this.btnXemChiTiet.Name = "btnXemChiTiet";
-            this.btnXemChiTiet.Size = new System.Drawing.Size(100, 32);
-            this.btnXemChiTiet.TabIndex = 3;
-            this.btnXemChiTiet.Text = "Chi tiết";
-            this.btnXemChiTiet.UseVisualStyleBackColor = false;
-            this.btnXemChiTiet.Click += new System.EventHandler(this.btnXemChiTiet_Click);
-            // 
-            // btnSua
-            // 
-            this.btnSua.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnSua.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(193)))), ((int)(((byte)(7)))));
-            this.btnSua.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnSua.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnSua.ForeColor = System.Drawing.Color.Black;
-            this.btnSua.Location = new System.Drawing.Point(831, 12);
-            this.btnSua.Name = "btnSua";
-            this.btnSua.Size = new System.Drawing.Size(70, 32);
-            this.btnSua.TabIndex = 4;
-            this.btnSua.Text = "Sửa";
-            this.btnSua.UseVisualStyleBackColor = false;
-            this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
-            // 
-            // btnXoa
-            // 
-            this.btnXoa.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnXoa.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(53)))), ((int)(((byte)(69)))));
-            this.btnXoa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnXoa.Font = new System.Drawing.Font("Segoe UI", 10F);
-            this.btnXoa.ForeColor = System.Drawing.Color.White;
-            this.btnXoa.Location = new System.Drawing.Point(907, 12);
-            this.btnXoa.Name = "btnXoa";
-            this.btnXoa.Size = new System.Drawing.Size(70, 32);
-            this.btnXoa.TabIndex = 5;
-            this.btnXoa.Text = "Xóa";
-            this.btnXoa.UseVisualStyleBackColor = false;
-            this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
             // 
             // lblNCC
             // 
@@ -181,11 +133,10 @@ namespace ngangiang_desktop
             this.dgvDonNhap.Location = new System.Drawing.Point(17, 235);
             this.dgvDonNhap.MultiSelect = false;
             this.dgvDonNhap.Name = "dgvDonNhap";
-            this.dgvDonNhap.ReadOnly = true;
+            this.dgvDonNhap.ReadOnly = false;
             this.dgvDonNhap.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
             this.dgvDonNhap.Size = new System.Drawing.Size(955, 175);
             this.dgvDonNhap.TabIndex = 10;
-            this.dgvDonNhap.SelectionChanged += new System.EventHandler(this.dgvDonNhap_SelectionChanged);
             // 
             // lblTongSoDon
             // 
@@ -249,9 +200,6 @@ namespace ngangiang_desktop
             this.Controls.Add(this.lblDanhSach);
             this.Controls.Add(this.dgvNCC);
             this.Controls.Add(this.lblNCC);
-            this.Controls.Add(this.btnXoa);
-            this.Controls.Add(this.btnSua);
-            this.Controls.Add(this.btnXemChiTiet);
             this.Controls.Add(this.btnLamMoi);
             this.Controls.Add(this.btnTaoDon);
             this.Controls.Add(this.lblTitle);
@@ -276,9 +224,6 @@ namespace ngangiang_desktop
         private System.Windows.Forms.DataGridView dgvChiTiet;
         private System.Windows.Forms.Button btnTaoDon;
         private System.Windows.Forms.Button btnLamMoi;
-        private System.Windows.Forms.Button btnXemChiTiet;
-        private System.Windows.Forms.Button btnSua;
-        private System.Windows.Forms.Button btnXoa;
         private System.Windows.Forms.Label lblNCC;
         private System.Windows.Forms.Label lblDanhSach;
         private System.Windows.Forms.Label lblChiTiet;
