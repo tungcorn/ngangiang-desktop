@@ -362,7 +362,6 @@ namespace ngangiang_desktop
                 }
 
                 lblTongSoDon.Text = $"Tổng số đơn: {dt.Rows.Count}";
-                lblTongTien.Text = $"Tổng cộng: {grandTotal:N0} ₫";
             }
             catch (Exception ex)
             {

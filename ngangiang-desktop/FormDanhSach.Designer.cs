@@ -31,17 +31,13 @@ namespace ngangiang_desktop
             this.lblTitle = new System.Windows.Forms.Label();
             this.dgvNCC = new System.Windows.Forms.DataGridView();
             this.dgvDonNhap = new System.Windows.Forms.DataGridView();
-            this.dgvChiTiet = new System.Windows.Forms.DataGridView();
             this.btnTaoDon = new System.Windows.Forms.Button();
             this.btnLamMoi = new System.Windows.Forms.Button();
             this.lblNCC = new System.Windows.Forms.Label();
             this.lblDanhSach = new System.Windows.Forms.Label();
-            this.lblChiTiet = new System.Windows.Forms.Label();
             this.lblTongSoDon = new System.Windows.Forms.Label();
-            this.lblTongTien = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNCC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDonNhap)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvChiTiet)).BeginInit();
             this.SuspendLayout();
             // 
             // lblTitle
@@ -148,44 +144,6 @@ namespace ngangiang_desktop
             this.lblTongSoDon.Size = new System.Drawing.Size(120, 15);
             this.lblTongSoDon.TabIndex = 11;
             this.lblTongSoDon.Text = "Tổng: 0 đơn nhập hàng";
-            // 
-            // lblChiTiet
-            // 
-            this.lblChiTiet.AutoSize = true;
-            this.lblChiTiet.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblChiTiet.Location = new System.Drawing.Point(13, 435);
-            this.lblChiTiet.Name = "lblChiTiet";
-            this.lblChiTiet.Size = new System.Drawing.Size(149, 20);
-            this.lblChiTiet.TabIndex = 12;
-            this.lblChiTiet.Text = "Chi tiết đơn nhập";
-            // 
-            // dgvChiTiet
-            // 
-            this.dgvChiTiet.AllowUserToAddRows = false;
-            this.dgvChiTiet.AllowUserToDeleteRows = false;
-            this.dgvChiTiet.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.dgvChiTiet.BackgroundColor = System.Drawing.Color.White;
-            this.dgvChiTiet.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvChiTiet.Location = new System.Drawing.Point(17, 460);
-            this.dgvChiTiet.Name = "dgvChiTiet";
-            this.dgvChiTiet.ReadOnly = true;
-            this.dgvChiTiet.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvChiTiet.Size = new System.Drawing.Size(955, 155);
-            this.dgvChiTiet.TabIndex = 13;
-            // 
-            // lblTongTien
-            // 
-            this.lblTongTien.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblTongTien.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTongTien.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(220)))), ((int)(((byte)(53)))), ((int)(((byte)(69)))));
-            this.lblTongTien.Location = new System.Drawing.Point(672, 638);
-            this.lblTongTien.Name = "lblTongTien";
-            this.lblTongTien.Size = new System.Drawing.Size(300, 20);
-            this.lblTongTien.TabIndex = 14;
-            this.lblTongTien.Text = "Tổng tiền đơn hàng: 0 ₫";
-            this.lblTongTien.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // FormDanhSach
             // 
