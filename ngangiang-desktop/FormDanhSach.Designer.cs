@@ -42,7 +42,6 @@ namespace ngangiang_desktop
             this.lblChiTiet = new System.Windows.Forms.Label();
             this.lblTongSoDon = new System.Windows.Forms.Label();
             this.lblTongTien = new System.Windows.Forms.Label();
-            this.btnTatCa = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvNCC)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDonNhap)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvChiTiet)).BeginInit();
@@ -100,7 +99,7 @@ namespace ngangiang_desktop
             this.btnXemChiTiet.Name = "btnXemChiTiet";
             this.btnXemChiTiet.Size = new System.Drawing.Size(100, 32);
             this.btnXemChiTiet.TabIndex = 3;
-            this.btnXemChiTiet.Text = "🔍 Chi tiết";
+            this.btnXemChiTiet.Text = "Chi tiết";
             this.btnXemChiTiet.UseVisualStyleBackColor = false;
             this.btnXemChiTiet.Click += new System.EventHandler(this.btnXemChiTiet_Click);
             // 
@@ -115,7 +114,7 @@ namespace ngangiang_desktop
             this.btnSua.Name = "btnSua";
             this.btnSua.Size = new System.Drawing.Size(70, 32);
             this.btnSua.TabIndex = 4;
-            this.btnSua.Text = "✏️ Sửa";
+            this.btnSua.Text = "Sửa";
             this.btnSua.UseVisualStyleBackColor = false;
             this.btnSua.Click += new System.EventHandler(this.btnSua_Click);
             // 
@@ -130,7 +129,7 @@ namespace ngangiang_desktop
             this.btnXoa.Name = "btnXoa";
             this.btnXoa.Size = new System.Drawing.Size(70, 32);
             this.btnXoa.TabIndex = 5;
-            this.btnXoa.Text = "�️ Xóa";
+            this.btnXoa.Text = "Xóa";
             this.btnXoa.UseVisualStyleBackColor = false;
             this.btnXoa.Click += new System.EventHandler(this.btnXoa_Click);
             // 
@@ -143,21 +142,6 @@ namespace ngangiang_desktop
             this.lblNCC.Size = new System.Drawing.Size(177, 20);
             this.lblNCC.TabIndex = 6;
             this.lblNCC.Text = "📋 Nhà cung cấp (NCC)";
-            // 
-            // btnTatCa
-            // 
-            this.btnTatCa.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(102)))), ((int)(((byte)(204)))));
-            this.btnTatCa.FlatAppearance.BorderSize = 0;
-            this.btnTatCa.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-            this.btnTatCa.Font = new System.Drawing.Font("Segoe UI", 8.5F, System.Drawing.FontStyle.Bold);
-            this.btnTatCa.ForeColor = System.Drawing.Color.White;
-            this.btnTatCa.Location = new System.Drawing.Point(200, 49);
-            this.btnTatCa.Name = "btnTatCa";
-            this.btnTatCa.Size = new System.Drawing.Size(60, 24);
-            this.btnTatCa.TabIndex = 7;
-            this.btnTatCa.Text = "Bỏ chọn";
-            this.btnTatCa.UseVisualStyleBackColor = false;
-            this.btnTatCa.Click += new System.EventHandler(this.btnTatCa_Click);
             // 
             // dgvNCC
             // 
@@ -222,7 +206,7 @@ namespace ngangiang_desktop
             this.lblChiTiet.Name = "lblChiTiet";
             this.lblChiTiet.Size = new System.Drawing.Size(149, 20);
             this.lblChiTiet.TabIndex = 12;
-            this.lblChiTiet.Text = "� Chi tiết đơn nhập";
+            this.lblChiTiet.Text = "Chi tiết đơn nhập";
             // 
             // dgvChiTiet
             // 
@@ -264,7 +248,6 @@ namespace ngangiang_desktop
             this.Controls.Add(this.dgvDonNhap);
             this.Controls.Add(this.lblDanhSach);
             this.Controls.Add(this.dgvNCC);
-            this.Controls.Add(this.btnTatCa);
             this.Controls.Add(this.lblNCC);
             this.Controls.Add(this.btnXoa);
             this.Controls.Add(this.btnSua);
@@ -301,6 +284,5 @@ namespace ngangiang_desktop
         private System.Windows.Forms.Label lblChiTiet;
         private System.Windows.Forms.Label lblTongSoDon;
         private System.Windows.Forms.Label lblTongTien;
-        private System.Windows.Forms.Button btnTatCa;
     }
 }

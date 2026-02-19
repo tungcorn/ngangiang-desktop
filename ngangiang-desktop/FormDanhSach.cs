@@ -324,17 +324,7 @@ namespace ngangiang_desktop
             dgvChiTiet.DataSource = null;
         }
 
-        /// <summary>
-        /// Nút Bỏ chọn: Bỏ tick toàn bộ checkbox NCC, hiện lại tất cả đơn hàng.
-        /// </summary>
-        private void btnTatCa_Click(object sender, EventArgs e)
-        {
-            foreach (DataGridViewRow row in dgvNCC.Rows)
-            {
-                row.Cells["Chọn"].Value = false;
-            }
-            LoadDanhSachDonNhap();
-        }
+
 
         /// <summary>
         /// Nút Xem chi tiết: Chức năng đang phát triển.

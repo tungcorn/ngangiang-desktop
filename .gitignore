@@ -66,6 +66,7 @@ obj/
 *.appxbundle
 *.ilk
 *.exp
+.idea/
 
 # NuGet Packages
 *.nupkg
