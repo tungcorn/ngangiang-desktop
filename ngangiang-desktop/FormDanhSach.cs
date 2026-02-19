@@ -136,13 +136,27 @@ namespace ngangiang_desktop
                 ReadOnly = true,
                 AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             });
+
+            // Cột Mặt hàng: tên MH ghép dấu phẩy — giống cột "Mặt hàng" trên Web
+            var colMatHang = new DataGridViewTextBoxColumn
+            {
+                Name = "Mặt hàng",
+                HeaderText = "Mặt hàng",
+                DataPropertyName = "Mặt hàng",
+                ReadOnly = true,
+                Width = 220
+            };
+            colMatHang.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            dgvDonNhap.Columns.Add(colMatHang);
+
             dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
             {
                 Name = "Số mặt hàng",
-                HeaderText = "Số mặt hàng",
+                HeaderText = "Số MH",
                 DataPropertyName = "Số mặt hàng",
                 ReadOnly = true,
-                Width = 100
+                Width = 55,
+                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleCenter }
             });
 
             var colTongTien = new DataGridViewTextBoxColumn
@@ -157,43 +171,43 @@ namespace ngangiang_desktop
             colTongTien.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             dgvDonNhap.Columns.Add(colTongTien);
 
-            // --- Nút hành động inline ---
-            // Nút Chi tiết
+            // --- Nút hành động inline: icon giống Web ---
+            // Nút Chi tiết (👁 xanh)
             var colChiTiet = new DataGridViewButtonColumn
             {
                 Name = "btnChiTiet",
                 HeaderText = "",
-                Text = "Chi tiết",
+                Text = "👁",
                 UseColumnTextForButtonValue = true,
-                Width = 75,
+                Width = 36,
                 FlatStyle = FlatStyle.Flat,
             };
             colChiTiet.DefaultCellStyle.BackColor = Color.FromArgb(13, 110, 253);
             colChiTiet.DefaultCellStyle.ForeColor = Color.White;
             dgvDonNhap.Columns.Add(colChiTiet);
 
-            // Nút Sửa
+            // Nút Sửa (✏️ vàng)
             var colSua = new DataGridViewButtonColumn
             {
                 Name = "btnSua",
                 HeaderText = "",
-                Text = "Sửa",
+                Text = "✏️",
                 UseColumnTextForButtonValue = true,
-                Width = 55,
+                Width = 36,
                 FlatStyle = FlatStyle.Flat,
             };
             colSua.DefaultCellStyle.BackColor = Color.FromArgb(255, 193, 7);
             colSua.DefaultCellStyle.ForeColor = Color.Black;
             dgvDonNhap.Columns.Add(colSua);
 
-            // Nút Xóa
+            // Nút Xóa (🗑️ đỏ)
             var colXoa = new DataGridViewButtonColumn
             {
                 Name = "btnXoa",
                 HeaderText = "",
-                Text = "Xóa",
+                Text = "🗑️",
                 UseColumnTextForButtonValue = true,
-                Width = 55,
+                Width = 36,
                 FlatStyle = FlatStyle.Flat,
             };
             colXoa.DefaultCellStyle.BackColor = Color.FromArgb(220, 53, 69);
@@ -341,6 +355,7 @@ namespace ngangiang_desktop
                     SELECT 
                         d.Id_DonNhapHang AS [Mã đơn],
                         n.Ten_NCC AS [Nhà cung cấp],
+                        STRING_AGG(m.Ten_MatHang, ', ') AS [Mặt hàng],
                         COUNT(c.FK_Id_MatHang) AS [Số mặt hàng],
                         ISNULL(SUM(c.Count * m.DonGia), 0) AS [Tổng tiền]
                     FROM DonNhapHang d
@@ -353,15 +368,15 @@ namespace ngangiang_desktop
 
                 DataTable dt = DatabaseHelper.ExecuteQuery(query);
                 dgvDonNhap.DataSource = dt;
+                dgvDonNhap.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
 
-                // Tính TỔNG CỘNG của tất cả các đơn đang được lọc
+                // Tính TỔNG CỘNG của tất cả các đơn đang được lọc — giống "Tổng cộng" trên Web
                 decimal grandTotal = 0;
                 foreach (DataRow row in dt.Rows)
-                {
                     grandTotal += Convert.ToDecimal(row["Tổng tiền"]);
-                }
 
-                lblTongSoDon.Text = $"Tổng số đơn: {dt.Rows.Count}";
+                lblTongSoDon.Text   = $"Tổng: {dt.Rows.Count} đơn";
+                lblGrandTotal.Text  = $"Tổng cộng: {grandTotal:N0} ₫";
             }
             catch (Exception ex)
             {
