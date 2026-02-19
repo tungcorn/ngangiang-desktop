@@ -189,12 +189,9 @@ namespace ngangiang_desktop
             // 
             // FormDanhSach
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(984, 680);
-            this.Controls.Add(this.lblTongTien);
-            this.Controls.Add(this.dgvChiTiet);
-            this.Controls.Add(this.lblChiTiet);
+            this.ClientSize = new System.Drawing.Size(984, 460);
             this.Controls.Add(this.lblTongSoDon);
             this.Controls.Add(this.dgvDonNhap);
             this.Controls.Add(this.lblDanhSach);
@@ -203,14 +200,13 @@ namespace ngangiang_desktop
             this.Controls.Add(this.btnLamMoi);
             this.Controls.Add(this.btnTaoDon);
             this.Controls.Add(this.lblTitle);
-            this.MinimumSize = new System.Drawing.Size(1000, 680);
+            this.MinimumSize = new System.Drawing.Size(1000, 460);
             this.Name = "FormDanhSach";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quản lý Đơn nhập hàng - Ngân Giang";
             this.Load += new System.EventHandler(this.FormDanhSach_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dgvNCC)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvDonNhap)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.dgvChiTiet)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -221,13 +217,10 @@ namespace ngangiang_desktop
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.DataGridView dgvNCC;
         private System.Windows.Forms.DataGridView dgvDonNhap;
-        private System.Windows.Forms.DataGridView dgvChiTiet;
         private System.Windows.Forms.Button btnTaoDon;
         private System.Windows.Forms.Button btnLamMoi;
         private System.Windows.Forms.Label lblNCC;
         private System.Windows.Forms.Label lblDanhSach;
-        private System.Windows.Forms.Label lblChiTiet;
         private System.Windows.Forms.Label lblTongSoDon;
-        private System.Windows.Forms.Label lblTongTien;
     }
 }

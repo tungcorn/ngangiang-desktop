@@ -34,7 +34,6 @@ namespace ngangiang_desktop
 
             // Xóa selection mặc định
             dgvDonNhap.ClearSelection();
-            dgvChiTiet.DataSource = null;
         }
 
         /// <summary>
@@ -217,8 +216,8 @@ namespace ngangiang_desktop
 
             if (colName == "btnChiTiet")
             {
-                // Auto load chi tiết khi nhấn nút Chi tiết
-                LoadChiTietDonNhap(idDonNhap);
+                // Mở Form chi tiết riêng biệt
+                OpenChiTiet(idDonNhap);
             }
             else if (colName == "btnSua")
             {
@@ -239,8 +238,8 @@ namespace ngangiang_desktop
             }
             else
             {
-                // Click vào các cột dữ liệu → load chi tiết
-                LoadChiTietDonNhap(idDonNhap);
+                // Click vào các cột dữ liệu → mở Form chi tiết
+                OpenChiTiet(idDonNhap);
             }
         }
 
@@ -373,47 +372,12 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Tải danh sách chi tiết mặt hàng của một đơn nhập cụ thể.
-        /// Thực hiện tính toán cột Thành tiền (Số lượng * Đơn giá) và Tổng tiền đơn hàng.
+        /// Mở FormChiTiet theo ID đơn hàng dưới dạng Modal Dialog.
         /// </summary>
-        /// <param name="idDonNhap">Mã đơn nhập hàng cần xem chi tiết.</param>
-        private void LoadChiTietDonNhap(int idDonNhap)
+        private void OpenChiTiet(int idDonNhap)
         {
-            try
-            {
-                string query = @"
-                    SELECT 
-                        m.Ten_MatHang AS [Mặt hàng],
-                        m.DonViTinh AS [Đơn vị],
-                        c.Count AS [Số lượng],
-                        m.DonGia AS [Đơn giá],
-                        (c.Count * m.DonGia) AS [Thành tiền]
-                    FROM ChiTietDonNhap c
-                    INNER JOIN MatHang m ON c.FK_Id_MatHang = m.Id_MatHang
-                    WHERE c.FK_Id_DonNhapHang = @IdDonNhap";
-
-                DataTable dt = new DataTable();
-                using (SqlConnection connection = DatabaseHelper.CreateConnection())
-                {
-                    connection.Open();
-                    SqlDataAdapter adapter = new SqlDataAdapter(query, connection);
-                    adapter.SelectCommand.Parameters.AddWithValue("@IdDonNhap", idDonNhap);
-                    adapter.Fill(dt);
-                }
-
-                dgvChiTiet.DataSource = dt;
-                dgvChiTiet.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-
-                if (dgvChiTiet.Columns["Đơn giá"] != null)
-                    dgvChiTiet.Columns["Đơn giá"].DefaultCellStyle.Format = "N0";
-                if (dgvChiTiet.Columns["Thành tiền"] != null)
-                    dgvChiTiet.Columns["Thành tiền"].DefaultCellStyle.Format = "N0";
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Lỗi khi tải chi tiết đơn nhập: {ex.Message}",
-                    "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            FormChiTiet formChiTiet = new FormChiTiet(idDonNhap);
+            formChiTiet.ShowDialog();
         }
 
         /// <summary>
@@ -426,7 +390,6 @@ namespace ngangiang_desktop
             {
                 LoadDanhSachNCC();
                 LoadDanhSachDonNhap();
-                dgvChiTiet.DataSource = null;
             }
         }
 
@@ -437,7 +400,6 @@ namespace ngangiang_desktop
         {
             LoadDanhSachNCC();
             LoadDanhSachDonNhap();
-            dgvChiTiet.DataSource = null;
         }
     }
 }

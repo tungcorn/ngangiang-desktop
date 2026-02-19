@@ -60,6 +60,12 @@
     <Compile Include="FormTaoDon.Designer.cs">
       <DependentUpon>FormTaoDon.cs</DependentUpon>
     </Compile>
+    <Compile Include="FormChiTiet.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="FormChiTiet.Designer.cs">
+      <DependentUpon>FormChiTiet.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="FormDanhSach.resx">
