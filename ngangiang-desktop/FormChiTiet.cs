@@ -172,6 +172,9 @@ namespace ngangiang_desktop
                 dgvChiTiet.Columns.Add(colTT);
 
                 dgvChiTiet.DataSource = dt;
+                // Kích hoạt tự động điều chỉnh chiều cao hàng SAU khi gán dữ liệu
+                // → bắt buộc để WrapMode trên cột "Mặt hàng" thực sự có hiệu lực
+                dgvChiTiet.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
 
                 // Tính TỔNG CỘNG (giống "TỔNG CỘNG:" trong Modal Web)
                 decimal total = 0;

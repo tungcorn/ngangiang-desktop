@@ -68,25 +68,27 @@ namespace ngangiang_desktop
             };
             dgvNCC.Columns.Add(colId);
 
-            // Cột tên NCC
+            // Cột tên NCC — 40% chiều rộng còn lại
             var colTen = new DataGridViewTextBoxColumn
             {
                 Name = "Ten_NCC",
                 HeaderText = "Tên nhà cung cấp",
                 DataPropertyName = "Ten_NCC",
                 ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 40
             };
             dgvNCC.Columns.Add(colTen);
 
-            // Cột địa chỉ
+            // Cột địa chỉ — 60% chiều rộng còn lại
             var colDiaChi = new DataGridViewTextBoxColumn
             {
                 Name = "DiaChi",
                 HeaderText = "Địa chỉ",
                 DataPropertyName = "DiaChi",
                 ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight = 60
             };
             dgvNCC.Columns.Add(colDiaChi);
 
@@ -134,17 +136,17 @@ namespace ngangiang_desktop
                 HeaderText = "Nhà cung cấp",
                 DataPropertyName = "Nhà cung cấp",
                 ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                Width = 160   // Fixed — nhường chỗ cho cột Mặt hàng
             });
 
-            // Cột Mặt hàng: tên MH ghép dấu phẩy — giống cột "Mặt hàng" trên Web
+            // Cột Mặt hàng: Fill → tự giãn khi form rộng
             var colMatHang = new DataGridViewTextBoxColumn
             {
                 Name = "Mặt hàng",
                 HeaderText = "Mặt hàng",
                 DataPropertyName = "Mặt hàng",
                 ReadOnly = true,
-                Width = 220
+                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
             };
             colMatHang.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
             dgvDonNhap.Columns.Add(colMatHang);
