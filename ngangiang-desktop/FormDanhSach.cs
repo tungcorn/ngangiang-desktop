@@ -1,238 +1,296 @@
 using System;
+using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Drawing;
 using System.Windows.Forms;
 
 namespace ngangiang_desktop
 {
     /// <summary>
-    /// Form chính của ứng dụng Desktop.
+    /// Form chính của ứng dụng Desktop — Quản lý Đơn nhập hàng.
     /// Chức năng:
-    /// 1. Hiển thị bảng NCC có cột checkbox để lọc — pattern "listcheckbox" chuẩn enterprise.
-    /// 2. Hiển thị danh sách đơn nhập hàng theo NCC đã tick.
-    /// 3. Mỗi dòng đơn hàng có nút Chi tiết / Sửa / Xóa inline.
-    /// 4. Xem chi tiết mặt hàng và thành tiền của từng đơn.
-    /// 5. Cung cấp lối tắt để tạo đơn hàng mới hoặc làm mới dữ liệu.
+    ///   1. Bảng NCC có checkbox để lọc đơn hàng.
+    ///   2. Danh sách đơn hàng với cột Mặt hàng, Tổng tiền.
+    ///   3. Nút hành động inline (Chi tiết / Sửa / Xóa) cho từng dòng.
+    ///   4. Hiển thị Tổng số đơn và Tổng cộng tiền.
+    /// Cấu trúc cột DataGridView được định nghĩa trong SetupDgvNCC() và SetupDgvDonNhap().
     /// </summary>
     public partial class FormDanhSach : Form
     {
         public FormDanhSach()
         {
             InitializeComponent();
-        }
-
-        /// <summary>
-        /// Sự kiện Load Form: Thiết lập bảng NCC, tải dữ liệu, trạng thái mặc định.
-        /// </summary>
-        private void FormDanhSach_Load(object sender, EventArgs e)
-        {
+            // Đặt kích thước ở đây để không bị VS Designer reset
+            this.ClientSize = new System.Drawing.Size(1010, 608);
+            this.MinimumSize = new System.Drawing.Size(1026, 640);
             SetupDgvNCC();
             SetupDgvDonNhap();
-            LoadDanhSachNCC();
-            LoadDanhSachDonNhap();
-
-            // Xóa selection mặc định
-            dgvDonNhap.ClearSelection();
         }
 
+        // ====================================================================
+        // Khởi tạo cột DataGridView
+        // ====================================================================
+
         /// <summary>
-        /// Thiết lập cấu trúc cột cho bảng NCC:
-        /// Cột 1: CheckBox (Chọn) — để tick lọc
-        /// Cột 2-4: Tên NCC, Địa chỉ, Email — thông tin readonly
-        /// Lưu Id_NCC trong cột ẩn để dùng khi xây dựng câu lệnh lọc SQL.
+        /// Khai báo cột cho bảng Nhà Cung Cấp (NCC).
+        /// AutoGenerateColumns = false để dùng cột thủ công.
         /// </summary>
         private void SetupDgvNCC()
         {
-            dgvNCC.Columns.Clear();
             dgvNCC.AutoGenerateColumns = false;
+            dgvNCC.AllowUserToAddRows    = false;
+            dgvNCC.AllowUserToDeleteRows = false;
+            dgvNCC.AllowUserToResizeRows = false;
+            dgvNCC.MultiSelect           = true;
 
-            // Cột checkbox
+            // Áp dụng style cho header
+            var headerStyle = new DataGridViewCellStyle
+            {
+                BackColor = System.Drawing.Color.FromArgb(240, 240, 240),
+                Font      = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold)
+            };
+            dgvNCC.ColumnHeadersDefaultCellStyle = headerStyle;
+
+            // Checkbox tick lọc
             var colChon = new DataGridViewCheckBoxColumn
             {
-                Name = "Chọn",
+                Name       = "colChon",
                 HeaderText = "✔",
-                Width = 40,
                 FalseValue = false,
-                TrueValue = true
+                TrueValue  = true,
+                Width      = 40
             };
-            dgvNCC.Columns.Add(colChon);
 
-            // Cột ẩn lưu Id_NCC
-            var colId = new DataGridViewTextBoxColumn
+            // ID NCC — ẩn
+            var colIdNCC = new DataGridViewTextBoxColumn
             {
-                Name = "Id_NCC",
-                HeaderText = "ID",
+                Name             = "colIdNCC",
                 DataPropertyName = "Id_NCC",
-                Visible = false
+                HeaderText       = "ID",
+                ReadOnly         = true,
+                Visible          = false
             };
-            dgvNCC.Columns.Add(colId);
 
-            // Cột tên NCC — 40% chiều rộng còn lại
-            var colTen = new DataGridViewTextBoxColumn
+            // Tên NCC — 40%
+            var colTenNCC = new DataGridViewTextBoxColumn
             {
-                Name = "Ten_NCC",
-                HeaderText = "Tên nhà cung cấp",
+                Name             = "colTenNCC",
                 DataPropertyName = "Ten_NCC",
-                ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 40
+                HeaderText       = "Tên nhà cung cấp",
+                AutoSizeMode     = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight       = 40F,
+                ReadOnly         = true
             };
-            dgvNCC.Columns.Add(colTen);
 
-            // Cột địa chỉ — 60% chiều rộng còn lại
+            // Địa chỉ — 60%
             var colDiaChi = new DataGridViewTextBoxColumn
             {
-                Name = "DiaChi",
-                HeaderText = "Địa chỉ",
+                Name             = "colDiaChi",
                 DataPropertyName = "DiaChi",
-                ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight = 60
+                HeaderText       = "Địa chỉ",
+                AutoSizeMode     = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight       = 60F,
+                ReadOnly         = true
             };
-            dgvNCC.Columns.Add(colDiaChi);
 
-            // Cột email
+            // Email — 180px cố định
             var colEmail = new DataGridViewTextBoxColumn
             {
-                Name = "Email",
-                HeaderText = "Email",
+                Name             = "colEmail",
                 DataPropertyName = "Email",
-                ReadOnly = true,
-                Width = 180
+                HeaderText       = "Email",
+                Width            = 180,
+                ReadOnly         = true
             };
-            dgvNCC.Columns.Add(colEmail);
 
-            // Thiết lập giao diện
-            dgvNCC.RowHeadersVisible = false;
-            dgvNCC.AllowUserToResizeRows = false;
-            dgvNCC.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dgvNCC.Columns.AddRange(colChon, colIdNCC, colTenNCC, colDiaChi, colEmail);
 
-            // Xử lý khi tick/bỏ tick checkbox → load lại đơn hàng
             dgvNCC.CellContentClick += DgvNCC_CellContentClick;
-            dgvNCC.CellClick += DgvNCC_CellClick;
+            dgvNCC.CellClick        += DgvNCC_CellClick;
         }
 
         /// <summary>
-        /// Thiết lập cột cho bảng Đơn nhập hàng.
-        /// Các cột dữ liệu + 3 cột nút hành động inline: Chi tiết, Sửa, Xóa.
+        /// Khai báo cột cho bảng Đơn nhập hàng.
+        /// Dùng DataPropertyName khớp với tên cột alias trong SQL query.
         /// </summary>
         private void SetupDgvDonNhap()
         {
             dgvDonNhap.AutoGenerateColumns = false;
-            dgvDonNhap.Columns.Clear();
+            dgvDonNhap.AllowUserToAddRows    = false;
+            dgvDonNhap.AllowUserToDeleteRows = false;
 
-            dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
+            var headerStyle = new DataGridViewCellStyle
             {
-                Name = "Mã đơn",
-                HeaderText = "Mã đơn",
+                BackColor = System.Drawing.Color.FromArgb(240, 240, 240),
+                Font      = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold)
+            };
+            dgvDonNhap.ColumnHeadersDefaultCellStyle = headerStyle;
+
+            // Mã đơn — 70px
+            var colMaDon = new DataGridViewTextBoxColumn
+            {
+                Name             = "colMaDon",
                 DataPropertyName = "Mã đơn",
-                ReadOnly = true,
-                Width = 70
-            });
-            dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
-            {
-                Name = "Nhà cung cấp",
-                HeaderText = "Nhà cung cấp",
-                DataPropertyName = "Nhà cung cấp",
-                ReadOnly = true,
-                Width = 160   // Fixed — nhường chỗ cho cột Mặt hàng
-            });
+                HeaderText       = "Mã đơn",
+                Width            = 70,
+                ReadOnly         = true
+            };
 
-            // Cột Mặt hàng: Fill → tự giãn khi form rộng
+            // Nhà cung cấp — tự giãn 40% phần còn lại
+            var colNCC = new DataGridViewTextBoxColumn
+            {
+                Name             = "colNhaCungCap",
+                DataPropertyName = "Nhà cung cấp",
+                HeaderText       = "Nhà cung cấp",
+                AutoSizeMode     = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight       = 40F,
+                ReadOnly         = true
+            };
+
+            // Mặt hàng — Fill 60%, WrapMode để hiển thị tên dài
             var colMatHang = new DataGridViewTextBoxColumn
             {
-                Name = "Mặt hàng",
-                HeaderText = "Mặt hàng",
+                Name             = "colMatHang",
                 DataPropertyName = "Mặt hàng",
-                ReadOnly = true,
-                AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill
+                HeaderText       = "Mặt hàng",
+                AutoSizeMode     = DataGridViewAutoSizeColumnMode.Fill,
+                FillWeight       = 60F,
+                ReadOnly         = true
             };
             colMatHang.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
-            dgvDonNhap.Columns.Add(colMatHang);
 
-            dgvDonNhap.Columns.Add(new DataGridViewTextBoxColumn
+            // Số MH — 55px căn giữa
+            var colSoMH = new DataGridViewTextBoxColumn
             {
-                Name = "Số mặt hàng",
-                HeaderText = "Số MH",
+                Name             = "colSoMatHang",
                 DataPropertyName = "Số mặt hàng",
-                ReadOnly = true,
-                Width = 55,
-                DefaultCellStyle = { Alignment = DataGridViewContentAlignment.MiddleCenter }
-            });
+                HeaderText       = "Số MH",
+                Width            = 55,
+                ReadOnly         = true
+            };
+            colSoMH.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
 
+            // Tổng tiền — 120px căn phải N0
             var colTongTien = new DataGridViewTextBoxColumn
             {
-                Name = "Tổng tiền",
-                HeaderText = "Tổng tiền",
+                Name             = "colTongTien",
                 DataPropertyName = "Tổng tiền",
-                ReadOnly = true,
-                Width = 120,
+                HeaderText       = "Tổng tiền",
+                Width            = 120,
+                ReadOnly         = true
             };
-            colTongTien.DefaultCellStyle.Format = "N0";
             colTongTien.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
-            dgvDonNhap.Columns.Add(colTongTien);
+            colTongTien.DefaultCellStyle.Format    = "N0";
 
-            // --- Nút hành động inline: icon giống Web ---
-            // Nút Chi tiết (👁 xanh)
+            // Nút Chi tiết — xanh
             var colChiTiet = new DataGridViewButtonColumn
             {
-                Name = "btnChiTiet",
-                HeaderText = "",
-                Text = "👁",
+                Name                       = "btnChiTiet",
+                HeaderText                 = "",
+                Text                       = "👁",
                 UseColumnTextForButtonValue = true,
-                Width = 36,
-                FlatStyle = FlatStyle.Flat,
+                FlatStyle                  = FlatStyle.Flat,
+                Width                      = 36
             };
-            colChiTiet.DefaultCellStyle.BackColor = Color.FromArgb(13, 110, 253);
-            colChiTiet.DefaultCellStyle.ForeColor = Color.White;
-            dgvDonNhap.Columns.Add(colChiTiet);
+            colChiTiet.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(13, 110, 253);
+            colChiTiet.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
 
-            // Nút Sửa (✏️ vàng)
+            // Nút Sửa — vàng
             var colSua = new DataGridViewButtonColumn
             {
-                Name = "btnSua",
-                HeaderText = "",
-                Text = "✏️",
+                Name                       = "btnSua",
+                HeaderText                 = "",
+                Text                       = "✏️",
                 UseColumnTextForButtonValue = true,
-                Width = 36,
-                FlatStyle = FlatStyle.Flat,
+                FlatStyle                  = FlatStyle.Flat,
+                Width                      = 36
             };
-            colSua.DefaultCellStyle.BackColor = Color.FromArgb(255, 193, 7);
-            colSua.DefaultCellStyle.ForeColor = Color.Black;
-            dgvDonNhap.Columns.Add(colSua);
+            colSua.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(255, 193, 7);
+            colSua.DefaultCellStyle.ForeColor = System.Drawing.Color.Black;
 
-            // Nút Xóa (🗑️ đỏ)
+            // Nút Xóa — đỏ
             var colXoa = new DataGridViewButtonColumn
             {
-                Name = "btnXoa",
-                HeaderText = "",
-                Text = "🗑️",
+                Name                       = "btnXoa",
+                HeaderText                 = "",
+                Text                       = "🗑️",
                 UseColumnTextForButtonValue = true,
-                Width = 36,
-                FlatStyle = FlatStyle.Flat,
+                FlatStyle                  = FlatStyle.Flat,
+                Width                      = 36
             };
-            colXoa.DefaultCellStyle.BackColor = Color.FromArgb(220, 53, 69);
-            colXoa.DefaultCellStyle.ForeColor = Color.White;
-            dgvDonNhap.Columns.Add(colXoa);
+            colXoa.DefaultCellStyle.BackColor = System.Drawing.Color.FromArgb(220, 53, 69);
+            colXoa.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
+
+            dgvDonNhap.Columns.AddRange(
+                colMaDon, colNCC, colMatHang, colSoMH, colTongTien,
+                colChiTiet, colSua, colXoa);
 
             dgvDonNhap.CellClick += DgvDonNhap_CellClick;
         }
 
+        // ====================================================================
+        // Form Load
+        // ====================================================================
+
+        private void FormDanhSach_Load(object sender, EventArgs e)
+        {
+            LoadDanhSachNCC();
+            LoadDanhSachDonNhap();
+            dgvDonNhap.ClearSelection();
+        }
+
+        // ====================================================================
+        // Sự kiện DataGridView NCC
+        // ====================================================================
+
         /// <summary>
-        /// Sự kiện khi click vào ô trong bảng Đơn nhập.
-        /// Xử lý: chọn dòng để xem chi tiết, hoặc nhấn nút hành động inline.
+        /// Click vào bất kỳ ô nào trong dòng NCC → đảo trạng thái checkbox lọc.
+        /// </summary>
+        private void DgvNCC_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+
+            // Chỉ xử lý nếu click vào cột ngoài checkbox (cột checkbox tự xử lý qua CellContentClick)
+            if (dgvNCC.Columns[e.ColumnIndex].Name != "colChon")
+            {
+                var cell = dgvNCC.Rows[e.RowIndex].Cells["colChon"];
+                cell.Value = !(bool)(cell.Value ?? false);
+                dgvNCC.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                LoadDanhSachDonNhap();
+            }
+        }
+
+        /// <summary>
+        /// Click trực tiếp vào ô checkbox → commit ngay và reload đơn hàng.
+        /// </summary>
+        private void DgvNCC_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0) return;
+            if (dgvNCC.Columns[e.ColumnIndex].Name == "colChon")
+            {
+                dgvNCC.CommitEdit(DataGridViewDataErrorContexts.Commit);
+                LoadDanhSachDonNhap();
+            }
+        }
+
+        // ====================================================================
+        // Sự kiện DataGridView Đơn nhập
+        // ====================================================================
+
+        /// <summary>
+        /// Click vào bảng đơn nhập:
+        ///   - btnChiTiet / click vào ô dữ liệu → mở FormChiTiet
+        ///   - btnSua     → thông báo đang phát triển
+        ///   - btnXoa     → xác nhận và thông báo đang phát triển
         /// </summary>
         private void DgvDonNhap_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex < 0) return;
 
-            int idDonNhap = Convert.ToInt32(dgvDonNhap.Rows[e.RowIndex].Cells["Mã đơn"].Value);
-            string colName = dgvDonNhap.Columns[e.ColumnIndex].Name;
+            int    idDonNhap = Convert.ToInt32(dgvDonNhap.Rows[e.RowIndex].Cells["colMaDon"].Value);
+            string colName   = dgvDonNhap.Columns[e.ColumnIndex].Name;
 
             if (colName == "btnChiTiet")
             {
-                // Mở Form chi tiết riêng biệt
                 OpenChiTiet(idDonNhap);
             }
             else if (colName == "btnSua")
@@ -254,62 +312,29 @@ namespace ngangiang_desktop
             }
             else
             {
-                // Click vào các cột dữ liệu → mở Form chi tiết
+                // Click vào cột dữ liệu → cũng mở chi tiết
                 OpenChiTiet(idDonNhap);
             }
         }
 
-        /// <summary>
-        /// Sự kiện khi click vào dòng trong bảng NCC.
-        /// Cho phép đảo trạng thái checkbox khi click vào bất kỳ ô nào trên dòng.
-        /// </summary>
-        private void DgvNCC_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-
-            // Nếu không phải click trực tiếp vào cột checkbox (cột checkbox đã có handler riêng)
-            if (dgvNCC.Columns[e.ColumnIndex].Name != "Chọn")
-            {
-                var cell = dgvNCC.Rows[e.RowIndex].Cells["Chọn"];
-                cell.Value = !(bool)(cell.Value ?? false); // Đảo trạng thái
-
-                dgvNCC.CommitEdit(DataGridViewDataErrorContexts.Commit);
-                LoadDanhSachDonNhap();
-            }
-        }
+        // ====================================================================
+        // Load dữ liệu
+        // ====================================================================
 
         /// <summary>
-        /// Sự kiện khi click vào ô trong bảng NCC.
-        /// Nếu click vào cột checkbox → commit thay đổi ngay và load lại đơn hàng.
-        /// </summary>
-        private void DgvNCC_CellContentClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex < 0) return;
-            if (dgvNCC.Columns[e.ColumnIndex].Name == "Chọn")
-            {
-                // Commit ngay để lấy giá trị checkbox mới nhất
-                dgvNCC.CommitEdit(DataGridViewDataErrorContexts.Commit);
-                LoadDanhSachDonNhap();
-            }
-        }
-
-        /// <summary>
-        /// Tải danh sách NCC từ CSDL vào bảng dgvNCC.
-        /// Mặc định không tick NCC nào = hiển thị tất cả đơn hàng.
+        /// Tải danh sách NCC vào dgvNCC. Mặc định không tick NCC nào.
         /// </summary>
         private void LoadDanhSachNCC()
         {
             try
             {
-                string query = "SELECT Id_NCC, Ten_NCC, DiaChi, Email FROM NCC ORDER BY Ten_NCC";
-                DataTable dt = DatabaseHelper.ExecuteQuery(query);
+                string    query = "SELECT Id_NCC, Ten_NCC, DiaChi, Email FROM NCC ORDER BY Ten_NCC";
+                DataTable dt    = DatabaseHelper.ExecuteQuery(query);
                 dgvNCC.DataSource = dt;
 
-                // Mặc định: tất cả checkbox unchecked
+                // Reset checkbox — DataSource gán lại nên phải set lại giá trị False
                 foreach (DataGridViewRow row in dgvNCC.Rows)
-                {
-                    row.Cells["Chọn"].Value = false;
-                }
+                    row.Cells["colChon"].Value = false;
 
                 dgvNCC.ClearSelection();
             }
@@ -321,44 +346,41 @@ namespace ngangiang_desktop
         }
 
         /// <summary>
-        /// Lấy danh sách Id_NCC đã được tick checkbox trong bảng NCC.
+        /// Trả về danh sách Id_NCC đang được tick chọn trong dgvNCC.
         /// </summary>
-        private System.Collections.Generic.List<int> GetSelectedNCCIds()
+        private List<int> GetSelectedNCCIds()
         {
-            var ids = new System.Collections.Generic.List<int>();
+            var ids = new List<int>();
             foreach (DataGridViewRow row in dgvNCC.Rows)
             {
-                var cellValue = row.Cells["Chọn"].Value;
-                if (cellValue != null && (bool)cellValue == true)
-                {
-                    ids.Add(Convert.ToInt32(row.Cells["Id_NCC"].Value));
-                }
+                var v = row.Cells["colChon"].Value;
+                if (v != null && (bool)v)
+                    ids.Add(Convert.ToInt32(row.Cells["colIdNCC"].Value));
             }
             return ids;
         }
 
         /// <summary>
-        /// Tải danh sách đơn nhập hàng từ CSDL.
-        /// Nếu có NCC được tick → lọc WHERE FK_Id_NCC IN (...)
-        /// Nếu không tick NCC nào → hiển thị tất cả đơn hàng.
+        /// Tải danh sách đơn nhập hàng.
+        /// Lọc theo NCC đã tick (nếu không tick → hiển thị tất cả).
+        /// Cột "Mặt hàng" dùng STRING_AGG để ghép tên MH bằng dấu phẩy.
         /// </summary>
         private void LoadDanhSachDonNhap()
         {
             try
             {
-                var selectedIds = GetSelectedNCCIds();
-
-                // Không tick NCC nào = hiện tất cả; có tick = lọc theo danh sách
-                string whereClause = "";
-                if (selectedIds.Count > 0)
-                    whereClause = $"WHERE d.FK_Id_NCC IN ({string.Join(",", selectedIds)})";
+                var    ids         = GetSelectedNCCIds();
+                string whereClause = ids.Count > 0
+                    ? $"WHERE d.FK_Id_NCC IN ({string.Join(",", ids)})"
+                    : "";
 
                 string query = $@"
-                    SELECT 
-                        d.Id_DonNhapHang AS [Mã đơn],
-                        n.Ten_NCC AS [Nhà cung cấp],
-                        STRING_AGG(m.Ten_MatHang, ', ') AS [Mặt hàng],
-                        COUNT(c.FK_Id_MatHang) AS [Số mặt hàng],
+                    SELECT
+                        d.Id_DonNhapHang        AS [Mã đơn],
+                        n.Ten_NCC               AS [Nhà cung cấp],
+                        STRING_AGG(m.Ten_MatHang, ', ')
+                                                AS [Mặt hàng],
+                        COUNT(c.FK_Id_MatHang)  AS [Số mặt hàng],
                         ISNULL(SUM(c.Count * m.DonGia), 0) AS [Tổng tiền]
                     FROM DonNhapHang d
                     INNER JOIN NCC n ON d.FK_Id_NCC = n.Id_NCC
@@ -369,16 +391,15 @@ namespace ngangiang_desktop
                     ORDER BY d.Id_DonNhapHang DESC";
 
                 DataTable dt = DatabaseHelper.ExecuteQuery(query);
-                dgvDonNhap.DataSource = dt;
-                dgvDonNhap.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
+                dgvDonNhap.DataSource        = dt;
+                dgvDonNhap.AutoSizeRowsMode  = DataGridViewAutoSizeRowsMode.AllCells;
 
-                // Tính TỔNG CỘNG của tất cả các đơn đang được lọc — giống "Tổng cộng" trên Web
                 decimal grandTotal = 0;
                 foreach (DataRow row in dt.Rows)
                     grandTotal += Convert.ToDecimal(row["Tổng tiền"]);
 
-                lblTongSoDon.Text   = $"Tổng: {dt.Rows.Count} đơn";
-                lblGrandTotal.Text  = $"Tổng cộng: {grandTotal:N0} ₫";
+                lblTongSoDon.Text  = $"Tổng: {dt.Rows.Count} đơn";
+                lblGrandTotal.Text = $"Tổng cộng: {grandTotal:N0} ₫";
             }
             catch (Exception ex)
             {
@@ -387,31 +408,25 @@ namespace ngangiang_desktop
             }
         }
 
-        /// <summary>
-        /// Mở FormChiTiet theo ID đơn hàng dưới dạng Modal Dialog.
-        /// </summary>
+        // ====================================================================
+        // Helpers & nút bấm
+        // ====================================================================
+
         private void OpenChiTiet(int idDonNhap)
         {
-            FormChiTiet formChiTiet = new FormChiTiet(idDonNhap);
-            formChiTiet.ShowDialog();
+            new FormChiTiet(idDonNhap).ShowDialog();
         }
 
-        /// <summary>
-        /// Mở form Tạo đơn mới (Modal Dialog).
-        /// </summary>
         private void btnTaoDon_Click(object sender, EventArgs e)
         {
-            FormTaoDon formTaoDon = new FormTaoDon();
-            if (formTaoDon.ShowDialog() == DialogResult.OK)
+            var form = new FormTaoDon();
+            if (form.ShowDialog() == DialogResult.OK)
             {
                 LoadDanhSachNCC();
                 LoadDanhSachDonNhap();
             }
         }
 
-        /// <summary>
-        /// Nút Làm mới: Tải lại toàn bộ dữ liệu từ CSDL.
-        /// </summary>
         private void btnLamMoi_Click(object sender, EventArgs e)
         {
             LoadDanhSachNCC();
