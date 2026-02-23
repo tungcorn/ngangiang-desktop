@@ -20,6 +20,11 @@ namespace ngangiang_desktop
             this.btnLamMoi = new System.Windows.Forms.Button();
             this.lblNCC = new System.Windows.Forms.Label();
             this.dgvNCC = new System.Windows.Forms.DataGridView();
+            this.lblLocNgay = new System.Windows.Forms.Label();
+            this.dtpTuNgay = new System.Windows.Forms.DateTimePicker();
+            this.lblDen = new System.Windows.Forms.Label();
+            this.dtpDenNgay = new System.Windows.Forms.DateTimePicker();
+            this.btnLocNgay = new System.Windows.Forms.Button();
             this.lblDanhSach = new System.Windows.Forms.Label();
             this.lblTongSoDon = new System.Windows.Forms.Label();
             this.lblGrandTotal = new System.Windows.Forms.Label();
@@ -97,11 +102,67 @@ namespace ngangiang_desktop
             this.dgvNCC.Size = new System.Drawing.Size(735, 106);
             this.dgvNCC.TabIndex = 4;
             // 
+            // lblLocNgay
+            // 
+            this.lblLocNgay.AutoSize = true;
+            this.lblLocNgay.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblLocNgay.Location = new System.Drawing.Point(13, 172);
+            this.lblLocNgay.Name = "lblLocNgay";
+            this.lblLocNgay.Size = new System.Drawing.Size(58, 15);
+            this.lblLocNgay.TabIndex = 9;
+            this.lblLocNgay.Text = "Từ ngày:";
+            // 
+            // dtpTuNgay
+            // 
+            this.dtpTuNgay.Checked = false;
+            this.dtpTuNgay.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.dtpTuNgay.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpTuNgay.Location = new System.Drawing.Point(75, 169);
+            this.dtpTuNgay.Name = "dtpTuNgay";
+            this.dtpTuNgay.ShowCheckBox = true;
+            this.dtpTuNgay.Size = new System.Drawing.Size(130, 23);
+            this.dtpTuNgay.TabIndex = 10;
+            // 
+            // lblDen
+            // 
+            this.lblDen.AutoSize = true;
+            this.lblDen.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.lblDen.Location = new System.Drawing.Point(215, 172);
+            this.lblDen.Name = "lblDen";
+            this.lblDen.Size = new System.Drawing.Size(66, 15);
+            this.lblDen.TabIndex = 11;
+            this.lblDen.Text = "Đến ngày:";
+            // 
+            // dtpDenNgay
+            // 
+            this.dtpDenNgay.Checked = false;
+            this.dtpDenNgay.Font = new System.Drawing.Font("Segoe UI", 9F);
+            this.dtpDenNgay.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpDenNgay.Location = new System.Drawing.Point(285, 169);
+            this.dtpDenNgay.Name = "dtpDenNgay";
+            this.dtpDenNgay.ShowCheckBox = true;
+            this.dtpDenNgay.Size = new System.Drawing.Size(130, 23);
+            this.dtpDenNgay.TabIndex = 12;
+            // 
+            // btnLocNgay
+            // 
+            this.btnLocNgay.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(13)))), ((int)(((byte)(110)))), ((int)(((byte)(253)))));
+            this.btnLocNgay.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnLocNgay.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold);
+            this.btnLocNgay.ForeColor = System.Drawing.Color.White;
+            this.btnLocNgay.Location = new System.Drawing.Point(425, 167);
+            this.btnLocNgay.Name = "btnLocNgay";
+            this.btnLocNgay.Size = new System.Drawing.Size(75, 27);
+            this.btnLocNgay.TabIndex = 13;
+            this.btnLocNgay.Text = "🔍 Lọc";
+            this.btnLocNgay.UseVisualStyleBackColor = false;
+            this.btnLocNgay.Click += new System.EventHandler(this.btnLocNgay_Click);
+            // 
             // lblDanhSach
             // 
             this.lblDanhSach.AutoSize = true;
             this.lblDanhSach.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Bold);
-            this.lblDanhSach.Location = new System.Drawing.Point(10, 172);
+            this.lblDanhSach.Location = new System.Drawing.Point(10, 200);
             this.lblDanhSach.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblDanhSach.Name = "lblDanhSach";
             this.lblDanhSach.Size = new System.Drawing.Size(142, 20);
@@ -114,7 +175,7 @@ namespace ngangiang_desktop
             this.lblTongSoDon.AutoSize = true;
             this.lblTongSoDon.Font = new System.Drawing.Font("Segoe UI", 9.5F, System.Drawing.FontStyle.Italic);
             this.lblTongSoDon.ForeColor = System.Drawing.Color.Gray;
-            this.lblTongSoDon.Location = new System.Drawing.Point(615, 175);
+            this.lblTongSoDon.Location = new System.Drawing.Point(615, 213);
             this.lblTongSoDon.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.lblTongSoDon.Name = "lblTongSoDon";
             this.lblTongSoDon.Size = new System.Drawing.Size(75, 17);
@@ -141,13 +202,13 @@ namespace ngangiang_desktop
             | System.Windows.Forms.AnchorStyles.Right)));
             this.dgvDonNhap.BackgroundColor = System.Drawing.Color.White;
             this.dgvDonNhap.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.dgvDonNhap.Location = new System.Drawing.Point(13, 191);
+            this.dgvDonNhap.Location = new System.Drawing.Point(13, 231);
             this.dgvDonNhap.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.dgvDonNhap.MultiSelect = false;
             this.dgvDonNhap.Name = "dgvDonNhap";
             this.dgvDonNhap.RowHeadersVisible = false;
             this.dgvDonNhap.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvDonNhap.Size = new System.Drawing.Size(735, 268);
+            this.dgvDonNhap.Size = new System.Drawing.Size(735, 228);
             this.dgvDonNhap.TabIndex = 8;
             // 
             // FormDanhSach
@@ -160,6 +221,11 @@ namespace ngangiang_desktop
             this.Controls.Add(this.btnTaoDon);
             this.Controls.Add(this.lblNCC);
             this.Controls.Add(this.dgvNCC);
+            this.Controls.Add(this.lblLocNgay);
+            this.Controls.Add(this.dtpTuNgay);
+            this.Controls.Add(this.lblDen);
+            this.Controls.Add(this.dtpDenNgay);
+            this.Controls.Add(this.btnLocNgay);
             this.Controls.Add(this.lblDanhSach);
             this.Controls.Add(this.lblTongSoDon);
             this.Controls.Add(this.lblGrandTotal);
@@ -188,5 +254,10 @@ namespace ngangiang_desktop
         private System.Windows.Forms.Label     lblTongSoDon;
         private System.Windows.Forms.Label     lblGrandTotal;
         private System.Windows.Forms.DataGridView dgvDonNhap;
+        private System.Windows.Forms.Label     lblLocNgay;
+        private System.Windows.Forms.DateTimePicker dtpTuNgay;
+        private System.Windows.Forms.Label     lblDen;
+        private System.Windows.Forms.DateTimePicker dtpDenNgay;
+        private System.Windows.Forms.Button    btnLocNgay;
     }
 }

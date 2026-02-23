@@ -135,25 +135,36 @@ namespace ngangiang_desktop
                 ReadOnly         = true
             };
 
-            // Nhà cung cấp — tự giãn 40% phần còn lại
+            // Nhà cung cấp — tự giãn 35% phần còn lại
             var colNCC = new DataGridViewTextBoxColumn
             {
                 Name             = "colNhaCungCap",
                 DataPropertyName = "Nhà cung cấp",
                 HeaderText       = "Nhà cung cấp",
                 AutoSizeMode     = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight       = 40F,
+                FillWeight       = 35F,
                 ReadOnly         = true
             };
 
-            // Mặt hàng — Fill 60%, WrapMode để hiển thị tên dài
+            // Ngày nhập — 90px căn giữa
+            var colNgayNhap = new DataGridViewTextBoxColumn
+            {
+                Name             = "colNgayNhap",
+                DataPropertyName = "Ngày nhập",
+                HeaderText       = "Ngày nhập",
+                Width            = 90,
+                ReadOnly         = true
+            };
+            colNgayNhap.DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+
+            // Mặt hàng — Fill 55%, WrapMode để hiển thị tên dài
             var colMatHang = new DataGridViewTextBoxColumn
             {
                 Name             = "colMatHang",
                 DataPropertyName = "Mặt hàng",
                 HeaderText       = "Mặt hàng",
                 AutoSizeMode     = DataGridViewAutoSizeColumnMode.Fill,
-                FillWeight       = 60F,
+                FillWeight       = 55F,
                 ReadOnly         = true
             };
             colMatHang.DefaultCellStyle.WrapMode = DataGridViewTriState.True;
@@ -221,7 +232,7 @@ namespace ngangiang_desktop
             colXoa.DefaultCellStyle.ForeColor = System.Drawing.Color.White;
 
             dgvDonNhap.Columns.AddRange(
-                colMaDon, colNCC, colMatHang, colSoMH, colTongTien,
+                colMaDon, colNCC, colNgayNhap, colMatHang, colSoMH, colTongTien,
                 colChiTiet, colSua, colXoa);
 
             dgvDonNhap.CellClick += DgvDonNhap_CellClick;
@@ -370,14 +381,26 @@ namespace ngangiang_desktop
             try
             {
                 var    ids         = GetSelectedNCCIds();
-                string whereClause = ids.Count > 0
-                    ? $"WHERE d.FK_Id_NCC IN ({string.Join(",", ids)})"
+                var    conditions  = new List<string>();
+
+                if (ids.Count > 0)
+                    conditions.Add($"d.FK_Id_NCC IN ({string.Join(",", ids)})");
+
+                // Lọc theo khoảng ngày nhập (chỉ lọc khi checkbox trong DateTimePicker được tick)
+                if (dtpTuNgay.Checked)
+                    conditions.Add($"d.NgayNhap >= '{dtpTuNgay.Value:yyyy-MM-dd}'");
+                if (dtpDenNgay.Checked)
+                    conditions.Add($"d.NgayNhap <= '{dtpDenNgay.Value:yyyy-MM-dd}'");
+
+                string whereClause = conditions.Count > 0
+                    ? "WHERE " + string.Join(" AND ", conditions)
                     : "";
 
                 string query = $@"
                     SELECT
                         d.Id_DonNhapHang        AS [Mã đơn],
                         n.Ten_NCC               AS [Nhà cung cấp],
+                        FORMAT(d.NgayNhap, 'dd/MM/yyyy') AS [Ngày nhập],
                         STRING_AGG(m.Ten_MatHang, ', ')
                                                 AS [Mặt hàng],
                         COUNT(c.FK_Id_MatHang)  AS [Số mặt hàng],
@@ -387,7 +410,7 @@ namespace ngangiang_desktop
                     LEFT JOIN ChiTietDonNhap c ON d.Id_DonNhapHang = c.FK_Id_DonNhapHang
                     LEFT JOIN MatHang m ON c.FK_Id_MatHang = m.Id_MatHang
                     {whereClause}
-                    GROUP BY d.Id_DonNhapHang, n.Ten_NCC
+                    GROUP BY d.Id_DonNhapHang, n.Ten_NCC, d.NgayNhap
                     ORDER BY d.Id_DonNhapHang DESC";
 
                 DataTable dt = DatabaseHelper.ExecuteQuery(query);
@@ -429,7 +452,17 @@ namespace ngangiang_desktop
 
         private void btnLamMoi_Click(object sender, EventArgs e)
         {
+            dtpTuNgay.Checked = false;
+            dtpDenNgay.Checked = false;
             LoadDanhSachNCC();
+            LoadDanhSachDonNhap();
+        }
+
+        /// <summary>
+        /// Click nút "Lọc" theo khoảng ngày nhập.
+        /// </summary>
+        private void btnLocNgay_Click(object sender, EventArgs e)
+        {
             LoadDanhSachDonNhap();
         }
     }
