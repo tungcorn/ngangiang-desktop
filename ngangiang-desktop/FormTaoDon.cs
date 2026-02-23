@@ -194,7 +194,7 @@ namespace ngangiang_desktop
             }
 
             // Gọi hàm lưu dữ liệu
-            LuuDonHang(Convert.ToInt32(cboNCC.SelectedValue), danhSachMatHang);
+            LuuDonHang(Convert.ToInt32(cboNCC.SelectedValue), dtpNgayNhap.Value.Date, danhSachMatHang);
         }
 
         /// <summary>
@@ -203,8 +203,9 @@ namespace ngangiang_desktop
         /// Nếu lỗi ở bất kỳ bước nào, toàn bộ sẽ được Rollback.
         /// </summary>
         /// <param name="idNCC">ID Nhà cung cấp.</param>
+        /// <param name="ngayNhap">Ngày nhập hàng do người dùng chọn.</param>
         /// <param name="danhSachMatHang">Dictionary chứa ID Mặt hàng và Số lượng.</param>
-        private void LuuDonHang(int idNCC, Dictionary<int, int> danhSachMatHang)
+        private void LuuDonHang(int idNCC, DateTime ngayNhap, Dictionary<int, int> danhSachMatHang)
         {
             // Quản lý connection/transaction thủ công bằng try/catch/finally để Rollback khi lỗi
             SqlConnection connection = null;
@@ -218,9 +219,10 @@ namespace ngangiang_desktop
 
                 // Bước 1: Insert vào bảng DonNhapHang và lấy ID vừa tạo
                 // Dùng SCOPE_IDENTITY() thay vì @@IDENTITY để tránh lấy nhầm ID từ trigger
-                string sqlDonNhap = "INSERT INTO DonNhapHang (FK_Id_NCC) VALUES (@IdNCC); SELECT SCOPE_IDENTITY();";
+                string sqlDonNhap = "INSERT INTO DonNhapHang (FK_Id_NCC, NgayNhap) VALUES (@IdNCC, @NgayNhap); SELECT SCOPE_IDENTITY();";
                 SqlCommand cmdDonNhap = new SqlCommand(sqlDonNhap, connection, transaction);
                 cmdDonNhap.Parameters.AddWithValue("@IdNCC", idNCC);
+                cmdDonNhap.Parameters.AddWithValue("@NgayNhap", ngayNhap);
 
                 int idDonNhap = Convert.ToInt32(cmdDonNhap.ExecuteScalar());
 

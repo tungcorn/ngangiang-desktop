@@ -31,6 +31,8 @@ namespace ngangiang_desktop
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblNCC = new System.Windows.Forms.Label();
             this.cboNCC = new System.Windows.Forms.ComboBox();
+            this.lblNgayNhap = new System.Windows.Forms.Label();
+            this.dtpNgayNhap = new System.Windows.Forms.DateTimePicker();
             this.lblMatHang = new System.Windows.Forms.Label();
             this.dgvMatHang = new System.Windows.Forms.DataGridView();
             this.btnThemDong = new System.Windows.Forms.Button();
@@ -68,8 +70,27 @@ namespace ngangiang_desktop
             this.cboNCC.FormattingEnabled = true;
             this.cboNCC.Location = new System.Drawing.Point(18, 85);
             this.cboNCC.Name = "cboNCC";
-            this.cboNCC.Size = new System.Drawing.Size(654, 25);
+            this.cboNCC.Size = new System.Drawing.Size(420, 25);
             this.cboNCC.TabIndex = 2;
+            // 
+            // lblNgayNhap
+            // 
+            this.lblNgayNhap.AutoSize = true;
+            this.lblNgayNhap.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblNgayNhap.Location = new System.Drawing.Point(458, 60);
+            this.lblNgayNhap.Name = "lblNgayNhap";
+            this.lblNgayNhap.Size = new System.Drawing.Size(80, 19);
+            this.lblNgayNhap.TabIndex = 9;
+            this.lblNgayNhap.Text = "Ngày nhập:";
+            // 
+            // dtpNgayNhap
+            // 
+            this.dtpNgayNhap.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.dtpNgayNhap.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpNgayNhap.Location = new System.Drawing.Point(462, 85);
+            this.dtpNgayNhap.Name = "dtpNgayNhap";
+            this.dtpNgayNhap.Size = new System.Drawing.Size(210, 25);
+            this.dtpNgayNhap.TabIndex = 10;
             // 
             // lblMatHang
             // 
@@ -166,6 +187,8 @@ namespace ngangiang_desktop
             this.Controls.Add(this.btnThemDong);
             this.Controls.Add(this.dgvMatHang);
             this.Controls.Add(this.lblMatHang);
+            this.Controls.Add(this.dtpNgayNhap);
+            this.Controls.Add(this.lblNgayNhap);
             this.Controls.Add(this.cboNCC);
             this.Controls.Add(this.lblNCC);
             this.Controls.Add(this.lblTitle);
@@ -191,5 +214,7 @@ namespace ngangiang_desktop
         private System.Windows.Forms.Button btnXoaDong;
         private System.Windows.Forms.Button btnLuu;
         private System.Windows.Forms.Button btnHuy;
+        private System.Windows.Forms.Label lblNgayNhap;
+        private System.Windows.Forms.DateTimePicker dtpNgayNhap;
     }
 }
