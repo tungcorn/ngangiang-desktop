@@ -20,6 +20,8 @@ namespace ngangiang_desktop
             this.lblMaDon         = new System.Windows.Forms.Label();
             this.lblNCCCaption    = new System.Windows.Forms.Label();
             this.lblNCC           = new System.Windows.Forms.Label();
+            this.lblNgayNhapCaption = new System.Windows.Forms.Label();
+            this.lblNgayNhap      = new System.Windows.Forms.Label();
             this.lblSoMHCaption   = new System.Windows.Forms.Label();
             this.lblSoMatHang     = new System.Windows.Forms.Label();
             this.dgvChiTiet       = new System.Windows.Forms.DataGridView();
@@ -50,6 +52,8 @@ namespace ngangiang_desktop
             this.pnlInfo.Controls.Add(this.lblMaDon);
             this.pnlInfo.Controls.Add(this.lblNCCCaption);
             this.pnlInfo.Controls.Add(this.lblNCC);
+            this.pnlInfo.Controls.Add(this.lblNgayNhapCaption);
+            this.pnlInfo.Controls.Add(this.lblNgayNhap);
             this.pnlInfo.Controls.Add(this.lblSoMHCaption);
             this.pnlInfo.Controls.Add(this.lblSoMatHang);
             this.pnlInfo.Location    = new System.Drawing.Point(0, 0);
@@ -83,8 +87,22 @@ namespace ngangiang_desktop
             this.lblNCC.Font      = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
             this.lblNCC.Location  = new System.Drawing.Point(128, 32);
             this.lblNCC.Name      = "lblNCC";
-            this.lblNCC.Size      = new System.Drawing.Size(560, 50);
+            this.lblNCC.Size      = new System.Drawing.Size(380, 50);
             this.lblNCC.Text      = "---";
+
+            // ── Cụm NGÀY NHẬP ─────────────────────────────────────────────
+            this.lblNgayNhapCaption.AutoSize  = true;
+            this.lblNgayNhapCaption.Font      = new System.Drawing.Font("Segoe UI", 8F);
+            this.lblNgayNhapCaption.ForeColor = System.Drawing.Color.Gray;
+            this.lblNgayNhapCaption.Location  = new System.Drawing.Point(530, 12);
+            this.lblNgayNhapCaption.Name      = "lblNgayNhapCaption";
+            this.lblNgayNhapCaption.Text      = "NGÀY NHẬP";
+
+            this.lblNgayNhap.AutoSize  = true;
+            this.lblNgayNhap.Font      = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Bold);
+            this.lblNgayNhap.Location  = new System.Drawing.Point(528, 34);
+            this.lblNgayNhap.Name      = "lblNgayNhap";
+            this.lblNgayNhap.Text      = "--/--/----";
 
             // ── Cụm SỐ MẶT HÀNG ────────────────────────────────────────────
             this.lblSoMHCaption.AutoSize  = true;
@@ -245,6 +263,8 @@ namespace ngangiang_desktop
         private System.Windows.Forms.Label lblMaDon;
         private System.Windows.Forms.Label lblNCCCaption;
         private System.Windows.Forms.Label lblNCC;
+        private System.Windows.Forms.Label lblNgayNhapCaption;
+        private System.Windows.Forms.Label lblNgayNhap;
         private System.Windows.Forms.Label lblSoMHCaption;
         private System.Windows.Forms.Label lblSoMatHang;
         private System.Windows.Forms.DataGridView dgvChiTiet;

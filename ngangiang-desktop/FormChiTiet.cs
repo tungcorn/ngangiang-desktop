@@ -44,12 +44,13 @@ namespace ngangiang_desktop
                     SELECT
                         d.Id_DonNhapHang,
                         n.Ten_NCC,
+                        d.NgayNhap,
                         COUNT(c.FK_Id_MatHang) AS SoMatHang
                     FROM DonNhapHang d
                     INNER JOIN NCC n ON d.FK_Id_NCC = n.Id_NCC
                     LEFT JOIN ChiTietDonNhap c ON d.Id_DonNhapHang = c.FK_Id_DonNhapHang
                     WHERE d.Id_DonNhapHang = @IdDonNhap
-                    GROUP BY d.Id_DonNhapHang, n.Ten_NCC";
+                    GROUP BY d.Id_DonNhapHang, n.Ten_NCC, d.NgayNhap";
 
                 var dt = new DataTable();
                 using (var conn = DatabaseHelper.CreateConnection())
@@ -65,6 +66,7 @@ namespace ngangiang_desktop
                     var row = dt.Rows[0];
                     lblMaDon.Text     = $"#{row["Id_DonNhapHang"]}";
                     lblNCC.Text       = row["Ten_NCC"].ToString();
+                    lblNgayNhap.Text  = Convert.ToDateTime(row["NgayNhap"]).ToString("dd/MM/yyyy");
                     lblSoMatHang.Text = row["SoMatHang"].ToString();
                 }
             }
